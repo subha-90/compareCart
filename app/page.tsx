@@ -12,7 +12,6 @@ import { ArchitectureModal } from '../src/components/ArchitectureModal';
 import { Product, OptimizedDeal, EscrowOrder } from '../src/types';
 import {
   Search,
-  Sparkles,
   TrendingDown,
   ShieldCheck,
   CreditCard,
@@ -20,14 +19,13 @@ import {
   ExternalLink,
   Tag,
   CheckCircle2,
-  Percent,
   Zap,
-  SlidersHorizontal,
-  ChevronRight,
   Link as LinkIcon,
   RefreshCw,
   Radio,
-  Layers
+  Layers,
+  ArrowUpRight,
+  Sparkles
 } from 'lucide-react';
 
 export default function Home() {
@@ -99,9 +97,9 @@ export default function Home() {
         setSelectedProductId(data.product.id);
         setLiveScrapeStatus({
           source: data.source === 'LIVE_SCRAPE' ? 'Flipkart & Amazon Live' : 'Calibrated Realtime Index',
-          durationMs: data.durationMs || 420,
+          durationMs: data.durationMs || 340,
         });
-        setNotification(`Live price fetched across merchants in ${data.durationMs}ms!`);
+        setNotification(`Live price verified across merchants in ${data.durationMs}ms`);
         setTimeout(() => setNotification(null), 5000);
       }
     } catch (err) {
@@ -114,7 +112,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-[#fafafa] text-zinc-900 font-sans selection:bg-zinc-900 selection:text-white">
       {/* Global Navigation Header */}
       <Navbar
         currentTab={currentTab}
@@ -125,134 +123,145 @@ export default function Home() {
 
       {/* Floating Notification Toast */}
       {notification && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-bounce">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-          <span className="text-xs font-semibold">{notification}</span>
+        <div className="fixed bottom-6 right-6 z-50 bg-zinc-950 text-white px-5 py-3 rounded-2xl shadow-xl border border-zinc-800 flex items-center gap-3 animate-fade-in text-xs font-medium">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{notification}</span>
           <button
             onClick={() => setCurrentTab('escrow')}
-            className="text-xs text-cyan-400 font-bold underline ml-2"
+            className="text-emerald-400 hover:text-emerald-300 font-semibold underline ml-1"
           >
             View in Ledger
           </button>
         </div>
       )}
 
-      {/* TAB 1: SHOPPER HUB */}
+      {/* TAB 1: PRICE MATRIX & DISCOVERY */}
       {currentTab === 'shopper' && (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-          {/* Hero Banner with Unified Value Proposition */}
-          <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
-            <div className="absolute -right-10 -bottom-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="max-w-3xl relative z-10 space-y-4">
-              <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full">
-                <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                <span>Live Real-Time Price Engine Active</span>
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          {/* Executive Search & Ingestion Banner */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200/90 shadow-2xs space-y-5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Real-Time E-Commerce & Card Optimizer</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight">
+                  Universal Price Comparison & Partner Card Network
+                </h1>
+                <p className="text-xs text-zinc-500 mt-1 max-w-2xl leading-relaxed">
+                  Real-time price discovery across Flipkart, Amazon, and Croma. Unlock credit card instant discounts through our verified cardholder pool even if you don&apos;t hold the card.
+                </p>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-                Search Once. Compare Everywhere. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-                  Unlock Partner Credit Cards Instantly.
-                </span>
-              </h1>
-
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-                CompareCart monitors live prices and coupons across <strong>Flipkart, Amazon, and Croma</strong>. When a merchant offers a 10% instant card discount you don&apos;t hold, our verified partner card network unlocks it for you through secure escrow.
-              </p>
-
-              {/* Input Mode Selector */}
-              <div className="flex items-center gap-2 pt-1 text-xs">
+              {/* Mode Toggle */}
+              <div className="flex items-center gap-1 bg-zinc-100 p-1 rounded-xl border border-zinc-200 self-start md:self-auto text-xs">
                 <button
                   onClick={() => setIsUrlMode(false)}
-                  className={`px-3 py-1 rounded-lg font-semibold transition ${
-                    !isUrlMode ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition ${
+                    !isUrlMode ? 'bg-white text-zinc-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
                   Search Product
                 </button>
                 <button
                   onClick={() => setIsUrlMode(true)}
-                  className={`px-3 py-1 rounded-lg font-semibold transition flex items-center gap-1 ${
-                    isUrlMode ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 ${
+                    isUrlMode ? 'bg-white text-zinc-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <LinkIcon className="w-3 h-3" />
-                  <span>Paste Amazon / Flipkart URL</span>
+                  <LinkIcon className="w-3.5 h-3.5" />
+                  <span>Paste Store Link</span>
                 </button>
               </div>
+            </div>
 
-              {/* Universal Search & Live Scrape Bar */}
-              <div className="flex flex-col sm:flex-row gap-2 max-w-2xl">
-                <div className="relative flex-1">
-                  {!isUrlMode ? (
-                    <>
-                      <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        placeholder="Search iPhone 16, MacBook M3, Sony XM5, Galaxy S24..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleTriggerLiveScrape()}
-                        className="w-full bg-slate-800/90 text-white text-xs pl-10 pr-4 py-3 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 placeholder:text-slate-500"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="url"
-                        placeholder="Paste https://www.amazon.in/dp/... or https://www.flipkart.com/..."
-                        value={urlInput}
-                        onChange={(e) => setUrlInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleTriggerLiveScrape()}
-                        className="w-full bg-slate-800/90 text-white text-xs pl-10 pr-4 py-3 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 placeholder:text-slate-500"
-                      />
-                    </>
-                  )}
-                </div>
-
-                <button
-                  disabled={isLiveScraping}
-                  onClick={() => handleTriggerLiveScrape()}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 disabled:opacity-50 text-slate-950 font-bold px-5 py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs shrink-0"
-                >
-                  {isLiveScraping ? (
-                    <>
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Live Fetching...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-3.5 h-3.5" />
-                      <span>Live Scrape</span>
-                    </>
-                  )}
-                </button>
+            {/* Live Search & URL Input Bar */}
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              <div className="relative flex-1">
+                {!isUrlMode ? (
+                  <>
+                    <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder="Search electronics: iPhone 16, MacBook Air M3, Sony XM5, Galaxy S24..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleTriggerLiveScrape()}
+                      className="w-full bg-zinc-50 text-zinc-900 text-xs pl-10 pr-4 py-3 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900 placeholder:text-zinc-400 transition"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <LinkIcon className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="url"
+                      placeholder="Paste Flipkart or Amazon product link (e.g. https://www.flipkart.com/...)"
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleTriggerLiveScrape()}
+                      className="w-full bg-zinc-50 text-zinc-900 text-xs pl-10 pr-4 py-3 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900 placeholder:text-zinc-400 transition"
+                    />
+                  </>
+                )}
               </div>
 
-              {/* Live Status indicator */}
+              <button
+                disabled={isLiveScraping}
+                onClick={() => handleTriggerLiveScrape()}
+                className="bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-400 text-white font-semibold px-5 py-3 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs shrink-0"
+              >
+                {isLiveScraping ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+                    <span>Scraping Live...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Live Compare</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Quick Suggestions & Latency */}
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500 pt-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] text-zinc-400">Popular:</span>
+                {['iPhone 16', 'MacBook Air M3', 'Sony WH-1000XM5', 'Samsung Galaxy S24'].map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => {
+                      setSearchQuery(tag);
+                      handleTriggerLiveScrape(tag);
+                    }}
+                    className="text-[11px] font-medium bg-zinc-100 hover:bg-zinc-200 text-zinc-700 px-2.5 py-0.5 rounded-lg transition"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
               {liveScrapeStatus && (
-                <div className="inline-flex items-center gap-2 text-[11px] bg-slate-800/80 px-3 py-1 rounded-lg border border-slate-700 text-slate-300">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Real-time Verified: <strong className="text-white">{liveScrapeStatus.source}</strong></span>
-                  <span>•</span>
-                  <span>Latency: <strong className="text-emerald-400">{liveScrapeStatus.durationMs}ms</strong></span>
+                <div className="flex items-center gap-2 font-mono text-[11px]">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-zinc-600">{liveScrapeStatus.source}</span>
+                  <span className="text-zinc-400">({liveScrapeStatus.durationMs}ms)</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Product Carousel / Selector */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <span>Select Product to Compare & Optimize</span>
-                <span className="text-xs text-slate-400 font-normal">({filteredProducts.length} items)</span>
+          {/* Product Selector Ribbon */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Tracked Products ({filteredProducts.length})
               </h2>
 
               {/* Category Pills */}
-              <div className="flex items-center gap-1.5 overflow-x-auto">
+              <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
                 {[
                   { id: 'all', label: 'All Deals' },
                   { id: 'smartphones', label: 'Phones' },
@@ -264,8 +273,8 @@ export default function Home() {
                     onClick={() => setSelectedCategory(cat.id)}
                     className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition shrink-0 ${
                       selectedCategory === cat.id
-                        ? 'bg-emerald-600 text-white font-bold border-emerald-600'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                        ? 'bg-zinc-900 text-white border-zinc-900'
+                        : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50'
                     }`}
                   >
                     {cat.label}
@@ -286,36 +295,36 @@ export default function Home() {
                     onClick={() => setSelectedProductId(prod.id)}
                     className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-white border-emerald-500 ring-2 ring-emerald-500/20 shadow-md'
-                        : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs'
+                        ? 'bg-white border-zinc-900 ring-1 ring-zinc-900 shadow-xs'
+                        : 'bg-white border-zinc-200/80 hover:border-zinc-300'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <img
                         src={prod.image}
                         alt={prod.title}
-                        className="w-14 h-14 object-cover rounded-xl border border-slate-100 shrink-0"
+                        className="w-12 h-12 object-cover rounded-xl border border-zinc-100 shrink-0"
                       />
                       <div className="min-w-0 flex-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{prod.brand}</span>
-                        <h3 className="text-xs font-bold text-slate-900 truncate mt-0.5">{prod.title}</h3>
+                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{prod.brand}</span>
+                        <h3 className="text-xs font-bold text-zinc-900 truncate mt-0.5">{prod.title}</h3>
                         <div className="flex items-baseline gap-1.5 mt-1">
-                          <span className="text-sm font-black text-emerald-700">
+                          <span className="text-sm font-extrabold text-zinc-900">
                             ₹{best.partnerFinalEffectivePrice.toLocaleString('en-IN')}
                           </span>
-                          <span className="text-[10px] text-slate-400 line-through">
+                          <span className="text-[10px] text-zinc-400 line-through">
                             ₹{prod.highestHistoricalPrice.toLocaleString('en-IN')}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
-                      <span className="text-emerald-600 font-semibold flex items-center gap-0.5">
-                        <TrendingDown className="w-3 h-3" /> Save ₹{(prod.highestHistoricalPrice - best.partnerFinalEffectivePrice).toLocaleString('en-IN')}
+                    <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[10px]">
+                      <span className="text-emerald-700 font-semibold flex items-center gap-0.5">
+                        Save ₹{(prod.highestHistoricalPrice - best.partnerFinalEffectivePrice).toLocaleString('en-IN')}
                       </span>
-                      <span className="text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded">
-                        Partner Card Eligible
+                      <span className="text-zinc-600 font-medium">
+                        Verified
                       </span>
                     </div>
                   </div>
@@ -325,74 +334,74 @@ export default function Home() {
           </div>
 
           {/* Active Product Showcase */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-3xl border border-zinc-200/90 p-6 sm:p-8 shadow-2xs">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Left Column: Product Thumbnail & Highlights (4 cols) */}
+              {/* Left Column: Product Info & Technical Specs (4 cols) */}
               <div className="lg:col-span-4 space-y-4">
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center justify-center">
+                <div className="bg-zinc-50 border border-zinc-200/60 rounded-2xl p-4 flex items-center justify-center">
                   <img
                     src={selectedProduct.image}
                     alt={selectedProduct.title}
-                    className="max-h-64 object-contain rounded-xl hover:scale-105 transition-transform duration-300"
+                    className="max-h-60 object-contain rounded-xl hover:scale-102 transition-transform duration-300"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    <span className="text-xs font-bold text-zinc-800 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
                       {selectedProduct.brand}
                     </span>
-                    <span className="text-xs text-slate-400">•</span>
-                    <span className="text-xs text-slate-500 capitalize">{selectedProduct.category}</span>
+                    <span className="text-xs text-zinc-400">•</span>
+                    <span className="text-xs text-zinc-500 capitalize">{selectedProduct.category}</span>
                   </div>
-                  <h2 className="text-lg font-black text-slate-900 mt-1">{selectedProduct.title}</h2>
+                  <h2 className="text-base font-bold text-zinc-900 mt-1">{selectedProduct.title}</h2>
                 </div>
 
-                {/* Specs Box */}
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2 text-xs">
-                  <h4 className="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Product Information</h4>
-                  <div className="space-y-1.5 text-slate-600">
+                {/* Technical Specifications */}
+                <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-200/70 space-y-2 text-xs">
+                  <h4 className="font-bold text-zinc-800 text-[10px] uppercase tracking-wider">Specifications & Verification</h4>
+                  <div className="space-y-1.5 text-zinc-600 text-[11px]">
                     {Object.entries(selectedProduct.specs).map(([key, val]) => (
-                      <div key={key} className="flex justify-between border-b border-slate-100 pb-1">
-                        <span className="text-slate-400">{key}:</span>
-                        <span className="font-semibold text-slate-800 text-right">{val}</span>
+                      <div key={key} className="flex justify-between border-b border-zinc-200/40 pb-1">
+                        <span className="text-zinc-400">{key}:</span>
+                        <span className="font-semibold text-zinc-800 text-right">{val}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column: Dynamic Price Intelligence & Comparison (8 cols) */}
+              {/* Right Column: Historical Chart & Merchant Matrix (8 cols) */}
               <div className="lg:col-span-8 space-y-6">
                 {/* 1. Historical Price Intelligence */}
                 <PriceHistoryChart product={selectedProduct} />
 
-                {/* 2. Top Recommended Deal Showcase Card */}
-                <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700 rounded-2xl p-5 text-white shadow-lg shadow-emerald-600/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {/* 2. Top Value Deal Banner */}
+                <div className="bg-zinc-900 rounded-2xl p-5 text-white shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                      <Zap className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Lowest Verified Price: {bestDeal.merchantName}</span>
+                    <div className="inline-flex items-center gap-1.5 text-emerald-400 text-xs font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span>Best Verified Deal: {bestDeal.merchantName}</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-black">
+                      <span className="text-2xl font-black text-white">
                         ₹{bestDeal.partnerFinalEffectivePrice.toLocaleString('en-IN')}
                       </span>
-                      <span className="text-xs text-emerald-200 line-through">
+                      <span className="text-xs text-zinc-400 line-through">
                         MRP: ₹{bestDeal.mrp.toLocaleString('en-IN')}
                       </span>
                     </div>
-                    <p className="text-xs text-emerald-100">
-                      Includes ₹{bestDeal.couponDiscount.toLocaleString('en-IN')} coupon + ₹{bestDeal.buyerSavings.toLocaleString('en-IN')} unlocked bank discount.
+                    <p className="text-xs text-zinc-400">
+                      Calculated with ₹{bestDeal.couponDiscount.toLocaleString('en-IN')} coupon + ₹{bestDeal.buyerSavings.toLocaleString('en-IN')} partner card discount.
                     </p>
                   </div>
 
                   <button
                     onClick={() => handleOpenEscrow(bestDeal)}
-                    className="bg-white hover:bg-slate-100 text-slate-900 font-black px-5 py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs shrink-0"
+                    className="bg-white hover:bg-zinc-100 text-zinc-950 font-bold px-5 py-3 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs shrink-0"
                   >
                     <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                    <span>Unlock Deal with Partner Card</span>
+                    <span>Unlock with Partner Card</span>
                   </button>
                 </div>
 
@@ -411,33 +420,33 @@ export default function Home() {
 
       {/* TAB 2: PARTNER PORTAL */}
       {currentTab === 'partner' && (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
           <PartnerPortal />
         </main>
       )}
 
       {/* TAB 3: ESCROW & SETTLEMENT LEDGER */}
       {currentTab === 'escrow' && (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
           <EscrowLedger />
         </main>
       )}
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-6 mt-12 text-xs text-slate-500">
+      <footer className="bg-white border-t border-zinc-200/80 py-6 mt-12 text-xs text-zinc-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-900">CompareCart Universal Platform</span>
+            <span className="font-bold text-zinc-900">CompareCart Universal Platform</span>
             <span>•</span>
             <span>Real-Time E-Commerce & Partner Card Orchestration</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsArchModalOpen(true)} className="hover:text-slate-900 underline">
+            <button onClick={() => setIsArchModalOpen(true)} className="hover:text-zinc-900 underline">
               Architecture & Scaling
             </button>
             <span>•</span>
-            <span className="text-emerald-600 font-semibold">RBI-Compliant Escrow Protection</span>
+            <span className="text-emerald-700 font-semibold">RBI-Compliant Escrow Protection</span>
           </div>
         </div>
       </footer>
