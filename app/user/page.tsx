@@ -8,6 +8,7 @@ import { RoleGuard } from '../../src/modules/shared/RoleGuard';
 import { PartnerEscrowModal } from '../../src/components/PartnerEscrowModal';
 import { ArchitectureModal } from '../../src/components/ArchitectureModal';
 import { Product, OptimizedDeal, EscrowOrder } from '../../src/types';
+import { Logo } from '../../src/components/Logo';
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
 
 export default function UserPortalPage() {
@@ -201,10 +202,10 @@ export default function UserPortalPage() {
 
       <footer className="bg-zinc-950/80 border-t border-white/[0.08] py-8 mt-16 text-xs text-zinc-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="font-extrabold text-white tracking-wide">CompareCart Black Edition</span>
+          <div className="flex items-center gap-3">
+            <Logo size="sm" href="/user" />
             <span className="text-zinc-700">•</span>
-            <span className="text-zinc-400">Endpoint: /user (Consumer Price Discovery)</span>
+            <span className="text-zinc-400">Consumer Price Discovery Engine</span>
           </div>
 
           <div className="flex items-center gap-4">

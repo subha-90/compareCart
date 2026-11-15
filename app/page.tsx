@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { ArchitectureModal } from '../src/components/ArchitectureModal';
 import { useTheme } from '../src/lib/theme';
+import { Logo } from '../src/components/Logo';
 
 export default function EnterprisePortalGateway() {
   const router = useRouter();
@@ -37,10 +38,7 @@ export default function EnterprisePortalGateway() {
       <header className="sticky top-0 z-40 bg-black/75 backdrop-blur-3xl border-b border-white/[0.08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white/[0.08] flex items-center justify-center text-white border border-white/10">
-              <Layers className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-sm font-semibold tracking-tight text-white">CompareCart</span>
+            <Logo size="sm" />
             <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-zinc-300">
               Enterprise v2.4
             </span>
@@ -335,8 +333,8 @@ export default function EnterprisePortalGateway() {
       {/* Apple Minimal Footer */}
       <footer className="bg-black border-t border-white/[0.08] py-8 text-xs text-[#86868b]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-white">CompareCart</span>
+          <div className="flex items-center gap-3">
+            <Logo size="sm" />
             <span>•</span>
             <span>Independent Endpoints: /user • /partner • /admin</span>
           </div>

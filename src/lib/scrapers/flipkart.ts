@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { Coupon, BankOffer } from '../../types';
 import { ScrapedProductResult } from './amazon';
 
 const USER_AGENTS = [

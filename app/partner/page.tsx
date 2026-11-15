@@ -6,6 +6,7 @@ import { Navbar } from '../../src/components/Navbar';
 import { PartnerPortal } from '../../src/components/PartnerPortal';
 import { RoleGuard } from '../../src/modules/shared/RoleGuard';
 import { ArchitectureModal } from '../../src/components/ArchitectureModal';
+import { Logo } from '../../src/components/Logo';
 import { ShieldCheck } from 'lucide-react';
 
 export default function PartnerPortalPage() {
@@ -32,10 +33,10 @@ export default function PartnerPortalPage() {
 
       <footer className="bg-zinc-950/80 border-t border-white/[0.08] py-8 mt-16 text-xs text-zinc-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="font-extrabold text-white tracking-wide">CompareCart Black Edition</span>
+          <div className="flex items-center gap-3">
+            <Logo size="sm" href="/partner" />
             <span className="text-zinc-700">•</span>
-            <span className="text-zinc-400">Endpoint: /partner (Cardholder Liquidity Pool)</span>
+            <span className="text-zinc-400">Cardholder Liquidity Pool & Escrow</span>
           </div>
 
           <div className="flex items-center gap-4">

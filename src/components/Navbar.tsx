@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { SystemMetrics, useCompareCart } from '../lib/store';
 import { useTheme } from '../lib/theme';
+import { Logo } from './Logo';
 
 interface NavbarProps {
   currentPortal?: 'user' | 'partner' | 'admin';
@@ -115,29 +116,21 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
-          {/* Logo & Brand (Apple Monochromatic Minimalist) */}
-          <Link
-            href={`/${currentProfile.role}`}
-            className="flex items-center gap-3 cursor-pointer select-none group"
-          >
-            <div className="w-8 h-8 rounded-full bg-white/[0.08] flex items-center justify-center text-white border border-white/10 group-hover:bg-white/[0.14] transition-all">
-              <Layers className="w-4 h-4 text-white" />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold tracking-tight text-white">
-                CompareCart
-              </span>
-              <span className={`text-[10px] font-medium tracking-wide px-2 py-0.5 rounded-full ${
+          {/* Official CompareCart Brand Logo */}
+          <div className="flex items-center gap-2.5">
+            <Logo size="sm" href={`/${currentProfile.role}`} />
+            <span
+              className={`text-[10px] font-medium tracking-wide px-2 py-0.5 rounded-full ${
                 currentProfile.role === 'admin'
                   ? 'bg-amber-400/10 text-amber-300 border border-amber-400/20'
                   : currentProfile.role === 'partner'
                   ? 'bg-blue-400/10 text-blue-300 border border-blue-400/20'
                   : 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20'
-              }`}>
-                {currentProfile.role === 'admin' ? 'Admin' : currentProfile.role === 'partner' ? 'Partner' : 'Store'}
-              </span>
-            </div>
-          </Link>
+              }`}
+            >
+              {currentProfile.role === 'admin' ? 'Admin' : currentProfile.role === 'partner' ? 'Partner' : 'Store'}
+            </span>
+          </div>
 
           {/* Role-Isolated Portal Navigation Pills */}
           <div className="flex items-center gap-2">
