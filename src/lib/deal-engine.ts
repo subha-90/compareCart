@@ -5,6 +5,7 @@ export const MERCHANT_METADATA: Record<MerchantId, { name: string; logoText: str
   amazon: { name: 'Amazon India', logoText: 'AZ', color: '#ff9900', badge: 'Prime Available' },
   croma: { name: 'Croma', logoText: 'CR', color: '#00e5d4', badge: 'Tata Neu NeuCoins' },
   reliance_digital: { name: 'Reliance Digital', logoText: 'RD', color: '#e42529', badge: 'InstaDelivery' },
+  vijay_sales: { name: 'Vijay Sales', logoText: 'VS', color: '#c91f28', badge: 'MyVS Rewards' },
   tata_cliq: { name: 'Tata CLiQ', logoText: 'TC', color: '#9d1e57', badge: 'CLiQ Luxury' },
 };
 
@@ -12,7 +13,7 @@ export const MERCHANT_METADATA: Record<MerchantId, { name: string; logoText: str
  * High-Throughput Deal Optimization Engine
  * Calculates the exact Effective Price:
  * Effective Price = Listed Price + Shipping - Best Coupon - Best Bank Discount
- * Also calculates the PiePay Partner Card scenario when buyer lacks the card.
+ * Also calculates the Partner Card scenario when buyer lacks the card.
  */
 export function optimizeListing(listing: MerchantListing): OptimizedDeal {
   const meta = MERCHANT_METADATA[listing.merchantId];
@@ -90,7 +91,7 @@ export function optimizeListing(listing: MerchantListing): OptimizedDeal {
     listedPrice: listing.listedPrice,
     mrp: listing.mrp,
     shippingCost: listing.shippingCost,
-    effectiveDiscountTotal: (listing.mrp - effectiveSelfPrice),
+    effectiveDiscountTotal: Math.max(0, listing.mrp - effectiveSelfPrice),
     appliedCoupon: bestCoupon,
     couponDiscount: maxCouponDiscount,
     bestBankOffer: bestBankOffer,
@@ -108,19 +109,22 @@ export function optimizeListing(listing: MerchantListing): OptimizedDeal {
 }
 
 /**
- * Optimizes all listings for a product and determines the absolute winner
+ * Optimizes all listings for a product and determines the absolute winner.
+ * Listings marked priceUnavailable are still included in the output (for the UI
+ * to render an "unavailable" row) but are excluded from best-price calculation.
  */
 export function optimizeProductDeals(product: Product): OptimizedDeal[] {
-  const deals = product.listings.map(listing => optimizeListing(listing));
-  
+  // Only process listings that are genuinely available with real prices
+  const validListings = product.listings.filter(l => !l.priceUnavailable && l.listedPrice > 0);
+  const deals = validListings.map(listing => optimizeListing(listing));
+
   // Find minimum effective price
   let minEffectivePrice = Infinity;
   let bestIndex = -1;
 
   deals.forEach((deal, idx) => {
-    // We evaluate by partnerFinalEffectivePrice or effectiveSelfPrice
     const priceToCompare = deal.partnerCardEligible ? deal.partnerFinalEffectivePrice : deal.effectiveSelfPrice;
-    if (priceToCompare < minEffectivePrice) {
+    if (priceToCompare > 0 && priceToCompare < minEffectivePrice) {
       minEffectivePrice = priceToCompare;
       bestIndex = idx;
     }
@@ -130,7 +134,7 @@ export function optimizeProductDeals(product: Product): OptimizedDeal[] {
     deals[bestIndex].isOverallBest = true;
   }
 
-  // Sort ascending by effective price
+  // Sort by lowest effective price
   return deals.sort((a, b) => {
     const pA = a.partnerCardEligible ? a.partnerFinalEffectivePrice : a.effectiveSelfPrice;
     const pB = b.partnerCardEligible ? b.partnerFinalEffectivePrice : b.effectiveSelfPrice;

@@ -76,43 +76,43 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/70 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto border border-zinc-200 shadow-2xl relative">
-        {/* Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md p-5 border-b border-zinc-100 flex items-center justify-between z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-2xl animate-fade-in">
+      <div className="bg-[#1c1c1e]/98 backdrop-blur-3xl text-[#f5f5f7] rounded-[28px] max-w-lg w-full max-h-[92vh] overflow-y-auto border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] relative">
+        {/* Apple-Style Header */}
+        <div className="sticky top-0 bg-[#1c1c1e]/95 backdrop-blur-2xl p-5 border-b border-white/[0.08] flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-zinc-900 flex items-center justify-center text-white shadow-xs">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <div className="w-9 h-9 rounded-full bg-white/[0.08] flex items-center justify-center text-white">
+              <ShieldCheck className="w-5 h-5 text-[#30d158]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-zinc-900 text-sm">Partner Card Discount Checkout</h3>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Escrow Protected
+                <h3 className="font-semibold text-white text-sm tracking-tight">Partner Card Escrow</h3>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#30d158]/10 text-[#30d158] border border-[#30d158]/20">
+                  RBI Protected
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-500">Peer-to-Peer Bank Offer Fulfillment</p>
+              <p className="text-[11px] text-[#86868b]">Peer-to-Peer Discount Fulfillment</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 flex items-center justify-center transition"
+            className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#86868b] hover:text-white flex items-center justify-center transition"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Step Progression Bar */}
-        <div className="px-6 py-2.5 bg-zinc-50 border-b border-zinc-100">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-400">
-            <span className={step === 'review' ? 'text-zinc-900 font-bold' : ''}>1. Split</span>
+        {/* Apple Stepper Progression */}
+        <div className="px-6 py-2.5 bg-black/40 border-b border-white/[0.06]">
+          <div className="flex items-center justify-between text-[11px] font-medium text-[#86868b]">
+            <span className={step === 'review' ? 'text-white font-semibold' : ''}>1. Split</span>
             <span>•</span>
-            <span className={step === 'address' ? 'text-zinc-900 font-bold' : ''}>2. Address</span>
+            <span className={step === 'address' ? 'text-white font-semibold' : ''}>2. Address</span>
             <span>•</span>
-            <span className={step === 'escrow_payment' ? 'text-zinc-900 font-bold' : ''}>3. UPI Deposit</span>
+            <span className={step === 'escrow_payment' ? 'text-white font-semibold' : ''}>3. UPI Deposit</span>
             <span>•</span>
-            <span className={step === 'confirmed' ? 'text-zinc-900 font-bold' : ''}>4. Status</span>
+            <span className={step === 'confirmed' ? 'text-white font-semibold' : ''}>4. Status</span>
           </div>
         </div>
 
@@ -122,27 +122,27 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
           {step === 'review' && (
             <div className="space-y-4">
               {/* Product Brief */}
-              <div className="flex items-center gap-3 p-3 bg-zinc-50 rounded-2xl border border-zinc-200/80">
+              <div className="flex items-center gap-3 p-3 bg-black/40 rounded-2xl border border-white/[0.06]">
                 <img
                   src={product.image}
                   alt={product.title}
-                  className="w-12 h-12 object-cover rounded-xl border border-zinc-200"
+                  className="w-12 h-12 object-contain bg-zinc-900 rounded-xl p-1"
                 />
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-zinc-900 truncate">{product.title}</h4>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">
-                    Order fulfilled on <strong>{meta.name}</strong> directly to your shipping address
+                  <h4 className="text-xs font-semibold text-white truncate">{product.title}</h4>
+                  <p className="text-[11px] text-[#86868b] mt-0.5">
+                    Order fulfilled on <strong className="text-white">{meta.name}</strong> to your delivery address
                   </p>
                 </div>
               </div>
 
               {/* Matched Verified Cardholder */}
-              <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-4">
+              <div className="bg-black/40 border border-white/[0.06] rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
-                    <UserCheck className="w-3.5 h-3.5 text-blue-600" /> Matched Verified Cardholder
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-[#86868b] flex items-center gap-1.5">
+                    <UserCheck className="w-3.5 h-3.5 text-[#2997ff]" /> Matched Cardholder
                   </span>
-                  <span className="bg-white text-zinc-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-zinc-200 shadow-2xs">
+                  <span className="text-[10px] font-medium text-[#30d158] bg-[#30d158]/10 px-2.5 py-0.5 rounded-full border border-[#30d158]/20">
                     Trust Rating: {matchedPartner.trustScore}%
                   </span>
                 </div>
@@ -151,62 +151,62 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
                   <img
                     src={matchedPartner.avatar}
                     alt={matchedPartner.name}
-                    className="w-11 h-11 rounded-full object-cover border border-zinc-200"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-1.5">
-                      <p className="font-bold text-zinc-900 text-xs">{matchedPartner.name}</p>
-                      <span className="text-[10px] text-zinc-400">({matchedPartner.city})</span>
+                      <p className="font-semibold text-white text-xs">{matchedPartner.name}</p>
+                      <span className="text-[10px] text-[#86868b]">({matchedPartner.city})</span>
                     </div>
-                    <p className="text-xs text-blue-700 font-semibold mt-0.5 flex items-center gap-1">
-                      <CreditCard className="w-3 h-3 text-blue-600" />
+                    <p className="text-xs text-[#2997ff] font-medium mt-0.5 flex items-center gap-1">
+                      <CreditCard className="w-3 h-3 text-[#2997ff]" />
                       {matchedCard?.cardName} (..{matchedCard?.last4})
                     </p>
-                    <span className="text-[10px] text-zinc-500 block">
-                      {matchedPartner.totalOrdersFulfilled}+ verified fulfillments • KYC Certified
+                    <span className="text-[10px] text-[#86868b] block mt-0.5">
+                      {matchedPartner.totalOrdersFulfilled}+ fulfillments • KYC Certified
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Transparent Financial Split */}
-              <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2 text-xs">
-                <div className="flex justify-between text-zinc-500">
+              <div className="bg-black/50 border border-white/[0.06] rounded-2xl p-4 space-y-2 text-xs">
+                <div className="flex justify-between text-[#86868b]">
                   <span>Merchant Listed Price</span>
-                  <span className="font-semibold text-zinc-800">₹{deal.listedPrice.toLocaleString('en-IN')}</span>
+                  <span className="font-medium text-white">₹{deal.listedPrice.toLocaleString('en-IN')}</span>
                 </div>
                 {deal.couponDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-700 font-medium">
+                  <div className="flex justify-between text-[#30d158] font-medium">
                     <span>Applied Merchant Coupon</span>
                     <span>−₹{deal.couponDiscount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-blue-700 font-medium">
+                <div className="flex justify-between text-[#2997ff] font-medium">
                   <span>Partner Card Bank Offer ({deal.bestBankOffer?.bank})</span>
                   <span>−₹{deal.grossBankDiscount.toLocaleString('en-IN')}</span>
                 </div>
 
-                <div className="pt-2 border-t border-dashed border-zinc-200 space-y-1 text-[11px]">
-                  <div className="flex justify-between text-emerald-800 font-semibold">
+                <div className="pt-2 border-t border-dashed border-white/10 space-y-1 text-[11px]">
+                  <div className="flex justify-between text-[#30d158] font-medium">
                     <span>↳ Your Net Cash Savings (70%)</span>
                     <span>+₹{deal.buyerSavings.toLocaleString('en-IN')} Saved</span>
                   </div>
-                  <div className="flex justify-between text-zinc-400">
+                  <div className="flex justify-between text-[#86868b]">
                     <span>↳ Cardholder Incentive (18%)</span>
                     <span>₹{deal.cardholderCommission.toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="flex justify-between text-zinc-400">
+                  <div className="flex justify-between text-[#86868b]">
                     <span>↳ CompareCart Escrow Fee (12%)</span>
                     <span>₹{deal.platformFee.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-zinc-200 flex justify-between items-baseline">
+                <div className="pt-3 border-t border-white/10 flex justify-between items-baseline">
                   <div>
-                    <span className="text-xs font-bold uppercase text-zinc-700">Amount Payable in Escrow:</span>
-                    <p className="text-[10px] text-zinc-400">Safeguarded until delivery verification</p>
+                    <span className="text-xs font-semibold uppercase text-[#86868b]">Amount Payable in Escrow:</span>
+                    <p className="text-[10px] text-[#86868b]">Safeguarded until delivery verification</p>
                   </div>
-                  <span className="text-xl font-black text-zinc-900">
+                  <span className="text-xl font-semibold text-white">
                     ₹{deal.partnerFinalEffectivePrice.toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -214,7 +214,7 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
 
               <button
                 onClick={() => setStep('address')}
-                className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-3.5 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs"
+                className="apple-pill-btn w-full py-3.5 flex items-center justify-center gap-2 text-xs"
               >
                 <span>Continue to Delivery Address</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -225,71 +225,71 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
           {/* STEP 2: ADDRESS */}
           {step === 'address' && (
             <div className="space-y-4">
-              <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-3 text-xs text-zinc-700 flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
+              <div className="bg-black/40 border border-white/[0.06] rounded-2xl p-3 text-xs text-zinc-300 flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-[#86868b] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block text-zinc-900">Direct Delivery to Your Address:</strong>
+                  <strong className="block text-white">Direct Delivery to Your Address:</strong>
                   The order is booked directly in your name on {meta.name} with original GST tax invoice.
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-zinc-700 mb-1">Full Name</label>
+                  <label className="block text-[11px] font-medium text-[#86868b] mb-1">Full Name</label>
                   <input
                     type="text"
                     value={buyerName}
                     onChange={(e) => setBuyerName(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+                    className="w-full text-xs p-3 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#0071e3]/60 focus:ring-1 focus:ring-[#0071e3]/30"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-zinc-700 mb-1">Mobile Number (For Delivery OTP)</label>
+                  <label className="block text-[11px] font-medium text-[#86868b] mb-1">Mobile Number (For Delivery OTP)</label>
                   <input
                     type="text"
                     value={buyerPhone}
                     onChange={(e) => setBuyerPhone(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900 font-mono"
+                    className="w-full text-xs p-3 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#0071e3]/60 focus:ring-1 focus:ring-[#0071e3]/30 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-zinc-700 mb-1">Address</label>
+                  <label className="block text-[11px] font-medium text-[#86868b] mb-1">Address</label>
                   <input
                     type="text"
                     value={addressLine}
                     onChange={(e) => setAddressLine(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+                    className="w-full text-xs p-3 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#0071e3]/60 focus:ring-1 focus:ring-[#0071e3]/30"
                   />
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-[10px] font-semibold text-zinc-700 mb-1">City</label>
+                    <label className="block text-[10px] font-medium text-[#86868b] mb-1">City</label>
                     <input
                       type="text"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full text-xs p-2.5 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+                      className="w-full text-xs p-2.5 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#0071e3]/60 focus:ring-1 focus:ring-[#0071e3]/30"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-zinc-700 mb-1">State</label>
+                    <label className="block text-[10px] font-medium text-[#86868b] mb-1">State</label>
                     <input
                       type="text"
                       value={state}
                       onChange={(e) => setState(e.target.value)}
-                      className="w-full text-xs p-2.5 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+                      className="w-full text-xs p-2.5 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#0071e3]/60 focus:ring-1 focus:ring-[#0071e3]/30"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-zinc-700 mb-1">Pincode</label>
+                    <label className="block text-[10px] font-medium text-[#86868b] mb-1">Pincode</label>
                     <input
                       type="text"
                       value={pincode}
                       onChange={(e) => setPincode(e.target.value)}
-                      className="w-full text-xs p-2.5 rounded-xl border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-900 font-mono"
+                      className="w-full text-xs p-2.5 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#0071e3]/60 focus:ring-1 focus:ring-[#0071e3]/30 font-mono"
                     />
                   </div>
                 </div>
@@ -298,13 +298,13 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={() => setStep('review')}
-                  className="w-1/3 text-xs font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 py-3 rounded-xl transition"
+                  className="apple-pill-btn-secondary w-1/3 text-xs py-3"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep('escrow_payment')}
-                  className="w-2/3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-3 rounded-xl shadow-xs transition text-xs flex items-center justify-center gap-1.5"
+                  className="apple-pill-btn w-2/3 text-xs py-3 flex items-center justify-center gap-1.5"
                 >
                   <span>Proceed to Escrow Deposit</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -316,26 +316,26 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
           {/* STEP 3: ESCROW PAYMENT */}
           {step === 'escrow_payment' && (
             <div className="space-y-4 text-center">
-              <div className="bg-zinc-950 text-white p-5 rounded-2xl space-y-3">
-                <div className="flex items-center justify-center gap-1.5 text-[11px] text-emerald-400 font-mono uppercase tracking-wider">
+              <div className="bg-black/60 p-5 rounded-2xl border border-white/10 space-y-3">
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#30d158] font-mono uppercase tracking-wider">
                   <Lock className="w-3.5 h-3.5" /> RBI-Compliant Escrow Account
                 </div>
-                <div className="text-2xl font-black text-white">
+                <div className="text-2xl font-semibold text-white">
                   ₹{deal.partnerFinalEffectivePrice.toLocaleString('en-IN')}
                 </div>
-                <p className="text-[11px] text-zinc-400 max-w-xs mx-auto">
+                <p className="text-[11px] text-[#86868b] max-w-xs mx-auto">
                   Payment is locked in nodal escrow and released to the cardholder only after order delivery.
                 </p>
 
                 {/* QR Code */}
-                <div className="bg-white p-3 rounded-xl inline-block shadow-inner mx-auto">
-                  <div className="w-32 h-32 bg-zinc-50 rounded-lg flex flex-col items-center justify-center text-zinc-900 border border-zinc-200">
+                <div className="bg-white p-3 rounded-2xl inline-block shadow-inner mx-auto">
+                  <div className="w-32 h-32 bg-zinc-50 rounded-xl flex flex-col items-center justify-center text-zinc-900 border border-zinc-200">
                     <QrCode className="w-20 h-20 text-zinc-900" />
-                    <span className="text-[9px] font-mono font-semibold text-zinc-500 mt-0.5">UPI: comparecart@escrow</span>
+                    <span className="text-[9px] font-mono font-medium text-zinc-600 mt-0.5">UPI: comparecart@escrow</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-[10px] text-zinc-400 font-mono">
+                <div className="flex items-center justify-center gap-2 text-[10px] text-[#86868b] font-mono">
                   <span>GPay</span> • <span>PhonePe</span> • <span>Paytm</span> • <span>BHIM</span>
                 </div>
               </div>
@@ -343,7 +343,7 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
               <button
                 disabled={isProcessing}
                 onClick={handlePayAndLockEscrow}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-zinc-400 text-white font-bold py-3.5 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs"
+                className="apple-pill-btn w-full py-3.5 flex items-center justify-center gap-2 text-xs disabled:opacity-50"
               >
                 {isProcessing ? (
                   <>
@@ -363,45 +363,45 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
           {/* STEP 4: CONFIRMED */}
           {step === 'confirmed' && createdOrder && (
             <div className="space-y-4 text-center py-2">
-              <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
-                <Check className="w-6 h-6 stroke-[3]" />
+              <div className="w-12 h-12 rounded-full bg-[#30d158]/10 text-[#30d158] flex items-center justify-center mx-auto border border-[#30d158]/20">
+                <Check className="w-6 h-6 stroke-[2.5]" />
               </div>
 
               <div>
-                <h3 className="text-base font-black text-zinc-900">Order Locked in Escrow</h3>
-                <p className="text-xs text-zinc-500 mt-0.5 font-mono">
-                  Order Ref: <strong className="text-zinc-800">{createdOrder.orderNumber}</strong>
+                <h3 className="text-base font-semibold text-white">Order Locked in Escrow</h3>
+                <p className="text-xs text-[#86868b] mt-0.5 font-mono">
+                  Order Ref: <strong className="text-white">{createdOrder.orderNumber}</strong>
                 </p>
               </div>
 
-              <div className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-4 text-left space-y-2 text-xs font-mono">
+              <div className="bg-black/50 border border-white/10 rounded-2xl p-4 text-left space-y-2 text-xs font-mono">
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Merchant Reference:</span>
-                  <span className="font-bold text-zinc-800">{createdOrder.merchantOrderRef}</span>
+                  <span className="text-[#86868b]">Merchant Reference:</span>
+                  <span className="font-medium text-white">{createdOrder.merchantOrderRef}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Courier Tracking:</span>
-                  <span className="font-bold text-blue-700">{createdOrder.awbTrackingNumber}</span>
+                  <span className="text-[#86868b]">Courier Tracking:</span>
+                  <span className="font-medium text-[#2997ff]">{createdOrder.awbTrackingNumber}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Estimated Delivery:</span>
-                  <span className="font-bold text-zinc-800">{createdOrder.estimatedDelivery}</span>
+                  <span className="text-[#86868b]">Estimated Delivery:</span>
+                  <span className="font-medium text-white">{createdOrder.estimatedDelivery}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Partner Cardholder:</span>
-                  <span className="font-bold text-zinc-800">{createdOrder.partnerName}</span>
+                  <span className="text-[#86868b]">Partner Cardholder:</span>
+                  <span className="font-medium text-white">{createdOrder.partnerName}</span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-zinc-200 font-bold font-sans">
+                <div className="flex justify-between pt-2 border-t border-white/10 font-medium font-sans">
                   <span>Amount in Escrow:</span>
-                  <span className="text-emerald-700">₹{createdOrder.effectivePricePaid.toLocaleString('en-IN')}</span>
+                  <span className="text-[#30d158]">₹{createdOrder.effectivePricePaid.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
               <button
                 onClick={onClose}
-                className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-3 rounded-xl transition text-xs"
+                className="apple-pill-btn-secondary w-full py-3 text-xs"
               >
-                View in Escrow Ledger
+                Close
               </button>
             </div>
           )}

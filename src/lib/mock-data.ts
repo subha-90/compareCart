@@ -42,7 +42,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
     listings: [
       {
         merchantId: 'flipkart',
-        url: 'https://flipkart.com',
+        url: 'https://www.flipkart.com/search?q=Apple+iPhone+16+128GB+Ultramarine',
         listedPrice: 73990,
         mrp: 79900,
         shippingCost: 0,
@@ -95,7 +95,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
       },
       {
         merchantId: 'amazon',
-        url: 'https://amazon.in',
+        url: 'https://www.amazon.in/s?k=Apple+iPhone+16+128GB+Ultramarine',
         listedPrice: 74900,
         mrp: 79900,
         shippingCost: 0,
@@ -147,7 +147,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
       },
       {
         merchantId: 'croma',
-        url: 'https://croma.com',
+        url: 'https://www.croma.com/searchB?q=Apple+iPhone+16+128GB%3Arelevance',
         listedPrice: 75990,
         mrp: 79900,
         shippingCost: 0,
@@ -223,7 +223,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
     listings: [
       {
         merchantId: 'flipkart',
-        url: 'https://flipkart.com',
+        url: 'https://www.flipkart.com/search?q=Apple+MacBook+Air+M3+16GB',
         listedPrice: 117900,
         mrp: 134900,
         shippingCost: 0,
@@ -262,7 +262,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
       },
       {
         merchantId: 'amazon',
-        url: 'https://amazon.in',
+        url: 'https://www.amazon.in/s?k=Apple+MacBook+Air+M3+16GB',
         listedPrice: 119900,
         mrp: 134900,
         shippingCost: 0,
@@ -327,7 +327,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
     listings: [
       {
         merchantId: 'amazon',
-        url: 'https://amazon.in',
+        url: 'https://www.amazon.in/s?k=Sony+WH-1000XM5',
         listedPrice: 25990,
         mrp: 34990,
         shippingCost: 0,
@@ -366,7 +366,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
       },
       {
         merchantId: 'flipkart',
-        url: 'https://flipkart.com',
+        url: 'https://www.flipkart.com/search?q=Sony+WH-1000XM5',
         listedPrice: 26990,
         mrp: 34990,
         shippingCost: 0,
@@ -430,7 +430,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
     listings: [
       {
         merchantId: 'flipkart',
-        url: 'https://flipkart.com',
+        url: 'https://www.flipkart.com/search?q=Samsung+Galaxy+S24+Ultra',
         listedPrice: 124999,
         mrp: 139999,
         shippingCost: 0,
@@ -469,7 +469,7 @@ export const SAMPLE_PRODUCTS: Product[] = [
       },
       {
         merchantId: 'amazon',
-        url: 'https://amazon.in',
+        url: 'https://www.amazon.in/s?k=Samsung+Galaxy+S24+Ultra',
         listedPrice: 125999,
         mrp: 139999,
         shippingCost: 0,

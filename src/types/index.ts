@@ -1,4 +1,4 @@
-export type MerchantId = 'flipkart' | 'amazon' | 'croma' | 'reliance_digital' | 'tata_cliq';
+export type MerchantId = 'flipkart' | 'amazon' | 'croma' | 'reliance_digital' | 'vijay_sales' | 'tata_cliq';
 
 export interface MerchantInfo {
   id: MerchantId;
@@ -50,6 +50,10 @@ export interface MerchantListing {
   isAssured: boolean;
   availableCoupons: Coupon[];
   applicableBankOffers: BankOffer[];
+  /** Set to true when scraping was blocked and no accurate price data is available */
+  priceUnavailable?: boolean;
+  /** Data source label for transparency */
+  dataSource?: 'live_scrape' | 'market_index' | 'blocked';
 }
 
 export interface PriceHistoryPoint {
@@ -179,4 +183,91 @@ export interface EscrowOrder {
   createdAt: string;
   estimatedDelivery: string;
   returnWindowEndDate: string;
+}
+
+export interface CartItem {
+  id: string;
+  product: Product;
+  selectedDeal: OptimizedDeal;
+  quantity: number;
+  addedAt: string;
+}
+
+export type FRMRiskTier = 'TIER_1_LOW' | 'TIER_2_MODERATE' | 'TIER_3_ELEVATED' | 'CRITICAL_HIGH';
+
+export interface FRMRiskAssessment {
+  overallScore: number; // 0 (safest) - 100 (high fraud risk)
+  riskTier: FRMRiskTier;
+  cibilScore: number; // 300 - 900
+  cibilStatus: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+  panVerified: boolean;
+  panHolderName: string;
+  aadhaarVerified: boolean;
+  pennyDropMatched: boolean;
+  pennyDropAccountHolder: string;
+  pennyDropMatchScore: number; // 0 - 100%
+  amlSanctionsClean: boolean;
+  velocityRiskScore: number; // 0 - 100
+  hourlySwipeVelocity: number;
+  dailySwipeGmv: number;
+  disputeReservePercentage: number; // default 5% rolling reserve
+  flags: string[];
+}
+
+export interface FRMRuleConfig {
+  maxDailyGmvPerCard: number;
+  maxHourlySwipes: number;
+  minCibilScore: number;
+  mandatoryPennyDrop: boolean;
+  reserveRatioPercent: number;
+  stepUpVerificationAboveGmv: number;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+  role: 'user' | 'partner' | 'admin';
+  kycVerified: boolean;
+  city: string;
+}
+
+export interface PartnerOnboardingRequest {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  panNumber: string;
+  aadhaarMasked: string;
+  employmentType: 'SALARIED' | 'SELF_EMPLOYED' | 'BUSINESS';
+  monthlyIncome: number;
+  bankAccount: string;
+  ifsc: string;
+  bankName: string;
+  initialCardBank: string;
+  initialCardName: string;
+  initialCardLast4: string;
+  initialCardLimit: number;
+  billingCycleDay: number;
+  cardStatementUploaded: boolean;
+  frmAssessment: FRMRiskAssessment;
+  status: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'STEP_UP_REQUIRED';
+  submittedAt: string;
+  rejectionReason?: string;
+  adminNotes?: string;
+}
+
+export interface CustomerOnboardingRecord {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  kycStatus: 'VERIFIED' | 'PENDING' | 'TIER_1';
+  totalOrders: number;
+  totalSaved: number;
+  joinedAt: string;
 }

@@ -42,78 +42,80 @@ export const EscrowLedger: React.FC = () => {
     <div className="space-y-6">
       {/* Overview Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border border-zinc-200/90 rounded-2xl p-5 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="glass-panel rounded-3xl p-6 border border-white/[0.08] shadow-2xl">
+          <div className="flex items-center justify-between text-zinc-400 text-xs font-bold uppercase tracking-wider">
             <span>Escrow Reserve Pool</span>
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
           </div>
-          <p className="text-xl font-bold text-zinc-900 mt-1">₹{metrics.escrowPoolValue.toLocaleString('en-IN')}</p>
-          <span className="text-[10px] text-zinc-500 font-medium">100% RBI Nodal Escrow Backed</span>
+          <p className="text-2xl font-black text-white mt-1.5">₹{metrics.escrowPoolValue.toLocaleString('en-IN')}</p>
+          <span className="text-[10px] text-zinc-400 font-medium mt-1 block">100% RBI Nodal Escrow Backed</span>
         </div>
 
-        <div className="bg-white border border-zinc-200/90 rounded-2xl p-5 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="glass-panel rounded-3xl p-6 border border-white/[0.08] shadow-2xl">
+          <div className="flex items-center justify-between text-zinc-400 text-xs font-bold uppercase tracking-wider">
             <span>Consumer Savings Delivered</span>
-            <TrendingUp className="w-4 h-4 text-zinc-700" />
+            <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
-          <p className="text-xl font-bold text-zinc-900 mt-1">₹{metrics.totalSavingsDelivered.toLocaleString('en-IN')}</p>
-          <span className="text-[10px] text-zinc-500 font-medium">{metrics.totalOrdersProcessed.toLocaleString()} orders verified</span>
+          <p className="text-2xl font-black text-white mt-1.5">₹{metrics.totalSavingsDelivered.toLocaleString('en-IN')}</p>
+          <span className="text-[10px] text-zinc-400 font-medium mt-1 block">{metrics.totalOrdersProcessed.toLocaleString()} orders verified</span>
         </div>
 
-        <div className="bg-white border border-zinc-200/90 rounded-2xl p-5 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="glass-panel rounded-3xl p-6 border border-white/[0.08] shadow-2xl">
+          <div className="flex items-center justify-between text-zinc-400 text-xs font-bold uppercase tracking-wider">
             <span>Dispute Rate</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
-          <p className="text-xl font-bold text-zinc-900 mt-1">0.00%</p>
-          <span className="text-[10px] text-emerald-700 font-medium">Automated Return Lock Active</span>
+          <p className="text-2xl font-black text-white mt-1.5">0.00%</p>
+          <span className="text-[10px] text-emerald-400 font-semibold mt-1 block">Automated Return Lock Active</span>
         </div>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-2xl border border-zinc-200/90 overflow-hidden shadow-2xs">
-        <div className="p-5 border-b border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-zinc-50/50">
+      <div className="glass-panel rounded-3xl border border-white/[0.08] overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-zinc-950/60">
           <div>
-            <h3 className="text-sm font-bold text-zinc-900">Escrow Transaction & Settlement Ledger</h3>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              Multi-party verification of buyer deposits, cardholder order placement, and payout release.
+            <h3 className="text-sm font-extrabold text-white uppercase tracking-wide">
+              Escrow Transaction & Settlement Ledger
+            </h3>
+            <p className="text-xs text-zinc-400 mt-1">
+              Multi-party cryptographic verification of buyer deposits, cardholder order placement, and payout release.
             </p>
           </div>
 
-          <div className="text-xs text-zinc-500">
-            Click <strong>&quot;Advance Status&quot;</strong> to simulate transactional state transitions.
+          <div className="text-xs text-zinc-400 font-mono">
+            Click <strong className="text-white">&quot;Advance Status&quot;</strong> to simulate transactional transitions.
           </div>
         </div>
 
-        <div className="divide-y divide-zinc-100">
+        <div className="divide-y divide-white/[0.06]">
           {orders.map((order) => (
-            <div key={order.id} className="p-5 hover:bg-zinc-50/50 transition">
+            <div key={order.id} className="p-6 hover:bg-white/[0.02] transition duration-200">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 {/* Product & Order info */}
                 <div className="flex items-start gap-3.5">
                   <img
                     src={order.productImage}
                     alt={order.productTitle}
-                    className="w-12 h-12 object-cover rounded-xl border border-zinc-200 shrink-0"
+                    className="w-12 h-12 object-cover rounded-xl border border-white/10 shrink-0 bg-zinc-950"
                   />
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-zinc-900">{order.orderNumber}</span>
-                      <span className="text-zinc-300">•</span>
-                      <span className="text-xs font-semibold text-zinc-800">{order.productTitle}</span>
+                      <span className="font-mono text-xs font-extrabold text-white">{order.orderNumber}</span>
+                      <span className="text-zinc-600">•</span>
+                      <span className="text-xs font-bold text-zinc-200">{order.productTitle}</span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2.5 text-xs text-zinc-500 mt-1">
-                      <span>Buyer: <strong className="text-zinc-800">{order.buyerName}</strong> ({order.buyerAddress.city})</span>
-                      <span>•</span>
-                      <span>Ref: <strong className="font-mono text-zinc-700">{order.merchantOrderRef}</strong></span>
-                      <span>•</span>
-                      <span>AWB: <strong className="font-mono text-blue-700">{order.awbTrackingNumber}</strong></span>
+                    <div className="flex flex-wrap items-center gap-2.5 text-xs text-zinc-400 mt-1">
+                      <span>Buyer: <strong className="text-white">{order.buyerName}</strong> ({order.buyerAddress.city})</span>
+                      <span className="text-zinc-600">•</span>
+                      <span>Ref: <strong className="font-mono text-zinc-300">{order.merchantOrderRef}</strong></span>
+                      <span className="text-zinc-600">•</span>
+                      <span>AWB: <strong className="font-mono text-blue-400">{order.awbTrackingNumber}</strong></span>
                     </div>
 
                     {order.partnerName && (
-                      <div className="text-[11px] text-zinc-600 font-medium mt-1">
-                        💳 Cardholder: <strong>{order.partnerName}</strong> ({order.partnerCardUsed})
+                      <div className="text-[11px] text-zinc-400 font-medium mt-1">
+                        💳 Cardholder: <strong className="text-zinc-200">{order.partnerName}</strong> ({order.partnerCardUsed})
                       </div>
                     )}
                   </div>
