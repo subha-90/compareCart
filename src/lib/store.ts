@@ -363,43 +363,11 @@ class CompareCartStore {
     otp: string;
     expiresAt: number;
   } | null = null;
+  private isInitialized = false;
   private listeners: (() => void)[] = [];
 
   constructor() {
     if (typeof window !== 'undefined') {
-      // Restore authenticated session from localStorage if present
-      try {
-        const storedSession = localStorage.getItem('comparecart_auth_session');
-        if (storedSession) {
-          const session = JSON.parse(storedSession);
-          if (session && session.role && MOCK_PROFILES[session.role as PortalRole]) {
-            this.currentRole = session.role as PortalRole;
-            this.currentProfile = MOCK_PROFILES[session.role as PortalRole];
-            this.isAuthenticatedUser = true;
-          }
-        }
-      } catch (e) {
-        console.warn('[CompareCartStore] Error loading session:', e);
-      }
-
-      // Load persistent registered users from localStorage
-      try {
-        const storedUsers = localStorage.getItem('comparecart_registered_users');
-        if (storedUsers) {
-          const parsed = JSON.parse(storedUsers);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            const existingIds = new Set(parsed.map((u: RegisteredUserAccount) => u.id));
-            const merged = [...parsed];
-            INITIAL_REGISTERED_USERS.forEach(initUser => {
-              if (!existingIds.has(initUser.id)) merged.push(initUser);
-            });
-            this.registeredUsers = merged;
-          }
-        }
-      } catch (e) {
-        console.warn('[CompareCartStore] Error loading stored users:', e);
-      }
-
       // Sync initial orders from Supabase PostgreSQL
       SupabaseService.fetchEscrowOrders().then(dbOrders => {
         if (dbOrders && dbOrders.length > 0) {
@@ -418,6 +386,50 @@ class CompareCartStore {
         });
       });
     }
+  }
+
+  /**
+   * Initializes client-side session from localStorage after hydration mount
+   * to guarantee 100% SSR-client hydration compatibility.
+   */
+  public initClient() {
+    if (this.isInitialized || typeof window === 'undefined') return;
+    this.isInitialized = true;
+
+    // Restore authenticated session from localStorage
+    try {
+      const storedSession = localStorage.getItem('comparecart_auth_session');
+      if (storedSession) {
+        const session = JSON.parse(storedSession);
+        if (session && session.role && MOCK_PROFILES[session.role as PortalRole]) {
+          this.currentRole = session.role as PortalRole;
+          this.currentProfile = MOCK_PROFILES[session.role as PortalRole];
+          this.isAuthenticatedUser = true;
+        }
+      }
+    } catch (e) {
+      console.warn('[CompareCartStore] Error loading session:', e);
+    }
+
+    // Load persistent registered users from localStorage
+    try {
+      const storedUsers = localStorage.getItem('comparecart_registered_users');
+      if (storedUsers) {
+        const parsed = JSON.parse(storedUsers);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const existingIds = new Set(parsed.map((u: RegisteredUserAccount) => u.id));
+          const merged = [...parsed];
+          INITIAL_REGISTERED_USERS.forEach(initUser => {
+            if (!existingIds.has(initUser.id)) merged.push(initUser);
+          });
+          this.registeredUsers = merged;
+        }
+      }
+    } catch (e) {
+      console.warn('[CompareCartStore] Error loading stored users:', e);
+    }
+
+    this.notify();
   }
 
   public getProducts(): Product[] {
@@ -1374,9 +1386,12 @@ class CompareCartStore {
 export const store = new CompareCartStore();
 
 export function useCompareCart() {
+  const [mounted, setMounted] = useState(false);
   const [, setVersion] = useState(0);
 
   useEffect(() => {
+    setMounted(true);
+    store.initClient();
     return store.subscribe(() => setVersion(v => v + 1));
   }, []);
 
@@ -1423,8 +1438,9 @@ export function useCompareCart() {
     markAllNotificationsAsRead: store.markAllNotificationsAsRead.bind(store),
     clearNotifications: store.clearNotifications.bind(store),
 
-    // Real-World Authentication & Registration
-    isAuthenticated: store.getIsAuthenticated(),
+    // Real-World Authentication & Registration (SSR Hydration Safe)
+    isMounted: mounted,
+    isAuthenticated: mounted ? store.getIsAuthenticated() : false,
     authModal: store.getAuthModalState(),
     openAuthModal: store.openAuthModal.bind(store),
     closeAuthModal: store.closeAuthModal.bind(store),

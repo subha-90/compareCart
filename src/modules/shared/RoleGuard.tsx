@@ -20,13 +20,22 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   children,
 }) => {
   const router = useRouter();
-  const { currentProfile, logout, isAuthenticated, openAuthModal } = useCompareCart();
+  const { currentProfile, logout, isAuthenticated, isMounted, openAuthModal } = useCompareCart();
 
   const portalKey = allowedRoles.includes('admin')
     ? 'admin'
     : allowedRoles.includes('partner')
     ? 'partner'
     : 'user';
+
+  // 0. Wait for client-side hydration mount before evaluating auth state
+  if (!isMounted) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center p-4">
+        <div className="w-8 h-8 rounded-full border-2 border-amber-400/20 border-t-amber-400 animate-spin" />
+      </div>
+    );
+  }
 
   // 1. If not authenticated at all, prompt login modal & credentials request
   if (!isAuthenticated) {
