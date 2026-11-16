@@ -20,6 +20,18 @@ export const NotificationToastContainer: React.FC = () => {
   const [activeToast, setActiveToast] = useState<AppNotification | null>(null);
   const [copied, setCopied] = useState(false);
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleDismiss = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      if (activeToast) {
+        markNotificationAsRead(activeToast.id);
+      }
+      setActiveToast(null);
+      setIsClosing(false);
+    }, 200);
+  };
 
   // Listen for new notifications appearing in the store
   useEffect(() => {
@@ -30,15 +42,18 @@ export const NotificationToastContainer: React.FC = () => {
     const isRecent = Date.now() - new Date(latest.timestamp).getTime() < 15000;
     if (isRecent && !seenIds.has(latest.id)) {
       setActiveToast(latest);
+      setIsClosing(false);
       setSeenIds(prev => new Set(prev).add(latest.id));
 
+      // Auto-dismiss after exactly 3 seconds (3000ms) for sign-out & standard toasts (8s for OTP)
+      const dismissDuration = latest.type === 'otp' ? 8000 : 3000;
       const timer = setTimeout(() => {
-        setActiveToast(null);
-      }, latest.type === 'otp' ? 12000 : 5000);
+        handleDismiss();
+      }, dismissDuration);
 
       return () => clearTimeout(timer);
     }
-  }, [notifications, seenIds]);
+  }, [notifications, seenIds, activeToast]);
 
   if (!activeToast) return null;
 
@@ -50,13 +65,10 @@ export const NotificationToastContainer: React.FC = () => {
     }
   };
 
-  const handleDismiss = () => {
-    markNotificationAsRead(activeToast.id);
-    setActiveToast(null);
-  };
-
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-[400px] w-full animate-fade-in pointer-events-auto">
+    <div className={`fixed top-4 right-4 z-50 max-w-[400px] w-full pointer-events-auto transition-all duration-200 ${
+      isClosing ? 'opacity-0 -translate-y-2 scale-95' : 'opacity-100 translate-y-0 scale-100 animate-fade-in'
+    }`}>
       {activeToast.type === 'otp' ? (
         // Specialized Real-World SMS / Push Alert for OTP
         <div className="bg-[#1c1c1e]/95 backdrop-blur-2xl border border-purple-500/40 rounded-2xl p-4 shadow-[0_20px_60px_rgba(168,85,247,0.25)] text-white">
