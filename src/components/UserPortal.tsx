@@ -28,7 +28,8 @@ import {
   Eye,
   Check,
   Star,
-  Tag
+  Tag,
+  RotateCcw
 } from 'lucide-react';
 
 interface UserPortalProps {
@@ -1068,40 +1069,90 @@ export const UserPortal: React.FC<UserPortalProps> = ({
                     </div>
                   </div>
 
-                  {/* Escrow Status Progress Bar */}
-                  <div className="bg-zinc-950/70 p-3.5 rounded-2xl border border-white/5 space-y-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-zinc-400">Escrow Security State:</span>
-                      <span className="font-mono font-bold text-amber-300 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/30 text-[11px]">
-                        {order.status}
-                      </span>
+                  {/* Escrow Status & Dynamic Matching / Refund Banner */}
+                  {order.status === 'MATCHING_CARDHOLDER' ? (
+                    <div className="bg-amber-400/10 border border-amber-400/30 p-4 rounded-2xl space-y-2 animate-pulse">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+                          <span className="font-semibold text-amber-300">
+                            Broadcasting Request to Eligible Cardholders Network...
+                          </span>
+                        </div>
+                        <span className="font-mono text-[11px] bg-black/60 px-2 py-0.5 rounded text-amber-300 border border-amber-400/20">
+                          Attempt {order.attemptCount} of {order.maxAttempts}
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-300">
+                        Required Card: <strong className="text-white">{order.requiredBank}</strong> • Your ₹{order.effectivePricePaid.toLocaleString('en-IN')} is 100% secured in Escrow. If no cardholder accepts or all 4 attempts decline, 100% of your funds are automatically refunded.
+                      </p>
                     </div>
+                  ) : order.status === 'ORDER_PLACING' ? (
+                    <div className="bg-[#2997ff]/10 border border-[#2997ff]/30 p-4 rounded-2xl space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-[#2997ff]" />
+                          <span className="font-semibold text-white">
+                            Cardholder Found! Swiping with {order.partnerName}
+                          </span>
+                        </div>
+                        <span className="font-mono text-[11px] bg-black/60 px-2 py-0.5 rounded text-[#2997ff] border border-blue-500/20">
+                          ORDER PLACING
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-300">
+                        Card in use: <strong className="text-white font-mono">{order.partnerCardUsed}</strong>. The cardholder is booking the order directly to your shipping address on {order.merchantId.toUpperCase()}.
+                      </p>
+                    </div>
+                  ) : order.status === 'REFUNDED' ? (
+                    <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-2xl space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <RotateCcw className="w-4 h-4 text-rose-400" />
+                          <span className="font-semibold text-rose-300">
+                            100% Refund Executed & Returned
+                          </span>
+                        </div>
+                        <span className="font-mono text-[11px] bg-black/60 px-2 py-0.5 rounded text-rose-400 border border-rose-500/20">
+                          REFUND COMPLETED
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-300">
+                        {order.failureReason || `All ${order.maxAttempts} cardholder attempts declined.`} Ref: <strong className="text-white font-mono">{order.refundRef || 'RFND_AUTO'}</strong>. 100% of ₹{order.effectivePricePaid.toLocaleString('en-IN')} was returned with zero deduction.
+                      </p>
+                    </div>
+                  ) : (
+                    /* Standard Escrow Status Progress Bar */
+                    <div className="bg-zinc-950/70 p-3.5 rounded-2xl border border-white/5 space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-zinc-400">Escrow Security State:</span>
+                        <span className="font-mono font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30 text-[11px]">
+                          {order.status}
+                        </span>
+                      </div>
 
-                    <div className="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className="bg-emerald-400 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_#34d399]"
-                        style={{
-                          width:
-                            order.status === 'ESCROW_DEPOSITED'
-                              ? '20%'
-                              : order.status === 'ORDER_PLACING'
-                              ? '40%'
-                              : order.status === 'MERCHANT_CONFIRMED'
-                              ? '60%'
-                              : order.status === 'DISPATCHED'
-                              ? '80%'
-                              : '100%',
-                        }}
-                      />
-                    </div>
+                      <div className="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className="bg-emerald-400 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_#34d399]"
+                          style={{
+                            width:
+                              order.status === 'MERCHANT_CONFIRMED'
+                                ? '50%'
+                                : order.status === 'DISPATCHED'
+                                ? '75%'
+                                : '100%',
+                          }}
+                        />
+                      </div>
 
-                    <div className="flex justify-between text-[10px] text-zinc-500 font-mono pt-1">
-                      <span>UPI Deposited</span>
-                      <span>Card Swiped</span>
-                      <span>Dispatched</span>
-                      <span>Delivered & Settled</span>
+                      <div className="flex justify-between text-[10px] text-zinc-500 font-mono pt-1">
+                        <span>1. Escrow Deposited</span>
+                        <span>2. Card Swiped</span>
+                        <span>3. Courier Dispatched</span>
+                        <span>4. Delivered & Settled</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>

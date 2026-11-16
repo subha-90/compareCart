@@ -8,37 +8,22 @@ import {
   ShoppingBag,
   CreditCard,
   ShieldCheck,
-  ArrowRight,
-  Layers,
   CheckCircle2,
   FileCheck2,
   ChevronRight,
   Sun,
-  Moon
+  Moon,
+  Lock,
+  Sparkles,
+  LogOut,
 } from 'lucide-react';
 import { useTheme } from '../src/lib/theme';
 import { Logo } from '../src/components/Logo';
-import { AuthModal } from '../src/components/AuthModal';
-import { useAuth } from '../src/lib/useAuth';
 
 export default function EnterprisePortalGateway() {
   const router = useRouter();
-  const { currentProfile, loginAs, metrics } = useCompareCart();
+  const { currentProfile, isAuthenticated, logout, openAuthModal } = useCompareCart();
   const { theme, toggleTheme } = useTheme();
-  const { user, profile, signOut, loading: authLoading } = useAuth();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [targetAuthRole, setTargetAuthRole] = useState<'user' | 'partner'>('user');
-
-  const handleEnterPortal = (role: 'user' | 'partner' | 'admin', targetUrl: string) => {
-    loginAs(role);
-    router.push(targetUrl);
-  };
-
-  const handleAuthSuccess = (role: string) => {
-    const validRole = role === 'admin' ? 'admin' : role === 'partner' ? 'partner' : 'user';
-    loginAs(validRole);
-    router.push(`/${validRole}`);
-  };
 
   return (
     <div className="min-h-screen flex flex-col luxury-mesh-bg text-[#f5f5f7] font-sans selection:bg-[#0071e3] selection:text-white">
@@ -72,31 +57,41 @@ export default function EnterprisePortalGateway() {
               )}
             </button>
 
-            {/* Supabase Live Auth Status / Action Button */}
-            {user ? (
+            {/* Live Auth Status / Action Button */}
+            {isAuthenticated ? (
               <div className="flex items-center gap-2 bg-[#1c1c1e]/80 border border-white/10 rounded-full px-3 py-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-xs text-zinc-200 font-medium truncate max-w-[120px]">
-                  {profile?.name || user.email?.split('@')[0]}
+                  {currentProfile.name.split(' ')[0]}
+                </span>
+                <span className="text-[9px] font-mono uppercase px-1.5 py-0.2 rounded bg-white/10 text-zinc-300">
+                  {currentProfile.role}
                 </span>
                 <button
-                  onClick={signOut}
-                  className="text-[10px] text-zinc-400 hover:text-red-400 ml-1 transition"
+                  onClick={logout}
+                  className="text-[10px] text-zinc-400 hover:text-red-400 ml-1 transition flex items-center gap-1"
                   title="Sign Out"
                 >
-                  Sign Out
+                  <LogOut className="w-3 h-3" />
+                  <span>Sign Out</span>
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => {
-                  setTargetAuthRole('user');
-                  setIsAuthModalOpen(true);
-                }}
-                className="apple-pill-btn text-xs px-3.5 py-1.5 font-medium flex items-center gap-1.5"
-              >
-                <span>Sign In</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openAuthModal('user', 'signin')}
+                  className="px-3 py-1.5 rounded-full text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/10 transition"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => openAuthModal('user', 'register')}
+                  className="apple-pill-btn text-xs px-3.5 py-1.5 font-medium flex items-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Register</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -119,28 +114,48 @@ export default function EnterprisePortalGateway() {
           Compare live prices across Flipkart, Amazon, Croma, Reliance Digital & Vijay Sales. Save up to 15% extra by unlocking partner credit card offers with 100% escrow protection.
         </p>
 
-        {/* Active Session Pill */}
-        <div className="mt-8 inline-flex items-center gap-3 p-1.5 pl-3 bg-[#1c1c1e]/80 backdrop-blur-2xl rounded-full border border-white/10 text-xs shadow-xl">
-          <span className="text-[#86868b] text-[11px]">Active account:</span>
-          <div className="flex items-center gap-2">
-            <img
-              src={currentProfile.avatar}
-              alt={currentProfile.name}
-              className="w-5 h-5 rounded-full object-cover"
-            />
-            <span className="text-white font-medium">{currentProfile.name}</span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white uppercase font-semibold">
-              {currentProfile.role}
-            </span>
+        {/* Active Session Pill or Guest Action Banner */}
+        {isAuthenticated ? (
+          <div className="mt-8 inline-flex items-center gap-3 p-1.5 pl-3 bg-[#1c1c1e]/80 backdrop-blur-2xl rounded-full border border-white/10 text-xs shadow-xl animate-fade-in">
+            <span className="text-[#86868b] text-[11px]">Active session:</span>
+            <div className="flex items-center gap-2">
+              <img
+                src={currentProfile.avatar}
+                alt={currentProfile.name}
+                className="w-5 h-5 rounded-full object-cover"
+              />
+              <span className="text-white font-medium">{currentProfile.name}</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white uppercase font-semibold">
+                {currentProfile.role}
+              </span>
+            </div>
+            <Link
+              href={`/${currentProfile.role}`}
+              className="apple-pill-btn text-xs px-3.5 py-1 flex items-center gap-1"
+            >
+              <span>Resume Portal</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <button
-            onClick={() => handleEnterPortal(currentProfile.role, `/${currentProfile.role}`)}
-            className="apple-pill-btn text-xs px-3.5 py-1 flex items-center gap-1"
-          >
-            <span>Resume</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        ) : (
+          <div className="mt-8 inline-flex items-center gap-2.5 p-1.5 pl-3.5 pr-2 bg-[#1c1c1e]/80 backdrop-blur-2xl rounded-full border border-white/10 text-xs shadow-xl animate-fade-in">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-zinc-300 text-xs">Access CompareCart Gateway:</span>
+            <button
+              onClick={() => openAuthModal('user', 'signin')}
+              className="px-3 py-1 rounded-full bg-white text-black text-xs font-semibold hover:bg-zinc-200 transition"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => openAuthModal('user', 'register')}
+              className="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-medium hover:bg-white/20 transition flex items-center gap-1"
+            >
+              <Sparkles className="w-3 h-3 text-[#d4a017]" />
+              <span>Create Account</span>
+            </button>
+          </div>
+        )}
       </header>
 
       {/* 3 Apple-Style Product Workspace Cards */}
@@ -176,8 +191,11 @@ export default function EnterprisePortalGateway() {
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-white truncate">Rahul Deshmukh</p>
-                  <p className="text-[10px] text-[#86868b] truncate">rahul.d@gmail.com • Bengaluru</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white truncate">Rahul Deshmukh</p>
+                    <span className="text-[9px] font-mono text-zinc-500 uppercase">Demo Profile</span>
+                  </div>
+                  <p className="text-[10px] text-[#86868b] truncate">rahul.d@gmail.com • Pass: shopper123</p>
                 </div>
               </div>
 
@@ -202,15 +220,35 @@ export default function EnterprisePortalGateway() {
               </div>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-white/[0.06]">
-              <Link
-                href="/user"
-                onClick={() => loginAs('user')}
-                className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
+            <div className="mt-8 pt-4 border-t border-white/[0.06] space-y-2">
+              {isAuthenticated && currentProfile.role === 'user' ? (
+                <Link
+                  href="/user"
+                  className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
+                >
+                  <span>Enter Consumer Portal</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('user', 'signin')}
+                  className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Sign In as Shopper</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => openAuthModal('user', 'register')}
+                className="apple-pill-btn-secondary w-full text-[11px] py-2 px-3 flex items-center justify-center gap-1.5"
               >
-                <span>Open Consumer Portal</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
+                <Sparkles className="w-3 h-3 text-[#30d158]" />
+                <span>Create Shopper Account (Sign Up)</span>
+              </button>
             </div>
           </div>
 
@@ -244,8 +282,11 @@ export default function EnterprisePortalGateway() {
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-white truncate">Vikramaditya Rao</p>
-                  <p className="text-[10px] text-[#86868b] truncate">vikram.rao@fintech.in • Mumbai</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white truncate">Vikramaditya Rao</p>
+                    <span className="text-[9px] font-mono text-zinc-500 uppercase">Demo Profile</span>
+                  </div>
+                  <p className="text-[10px] text-[#86868b] truncate">vikram.rao@fintech.in • Pass: partner123</p>
                 </div>
               </div>
 
@@ -271,23 +312,44 @@ export default function EnterprisePortalGateway() {
             </div>
 
             <div className="mt-8 pt-4 border-t border-white/[0.06] space-y-2">
-              <Link
-                href="/partner"
-                onClick={() => loginAs('partner')}
-                className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
-              >
-                <span>Open Partner Terminal</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
+              {isAuthenticated && currentProfile.role === 'partner' ? (
+                <Link
+                  href="/partner"
+                  className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
+                >
+                  <span>Enter Partner Terminal</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('partner', 'signin')}
+                  className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Sign In as Card Partner</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              )}
 
-              <Link
-                href="/partner/onboard"
-                onClick={() => loginAs('partner')}
-                className="apple-pill-btn-secondary w-full text-[11px] py-2 px-3 flex items-center justify-center gap-1.5"
-              >
-                <FileCheck2 className="w-3 h-3 text-[#2997ff]" />
-                <span>KYC Onboarding Wizard</span>
-              </Link>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('partner', 'register')}
+                  className="apple-pill-btn-secondary text-[11px] py-2 px-2.5 flex items-center justify-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3 text-[#2997ff]" />
+                  <span>Register Partner</span>
+                </button>
+
+                <Link
+                  href="/partner/onboard"
+                  className="apple-pill-btn-secondary text-[11px] py-2 px-2.5 flex items-center justify-center gap-1"
+                >
+                  <FileCheck2 className="w-3 h-3 text-[#2997ff]" />
+                  <span>KYC Wizard</span>
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -321,8 +383,11 @@ export default function EnterprisePortalGateway() {
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-white truncate">Dr. Arvind Swaminathan</p>
-                  <p className="text-[10px] text-[#86868b] truncate">arvind.admin@comparecart.in • New Delhi</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-white truncate">Dr. Arvind Swaminathan</p>
+                    <span className="text-[9px] font-mono text-zinc-500 uppercase">Demo Profile</span>
+                  </div>
+                  <p className="text-[10px] text-[#86868b] truncate">arvind.admin@comparecart.in • Pass: admin123</p>
                 </div>
               </div>
 
@@ -347,16 +412,31 @@ export default function EnterprisePortalGateway() {
               </div>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-white/[0.06]">
-              <Link
-                href="/admin"
-                onClick={() => loginAs('admin')}
-                className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-black font-semibold rounded-full text-xs py-3 px-4 flex items-center justify-center gap-2 w-full transition shadow-[0_2px_12px_rgba(245,158,11,0.25)] active:scale-[0.98]"
-              >
-                <ShieldCheck className="w-4 h-4 text-black" />
-                <span>Open Super Admin Suite</span>
-                <ChevronRight className="w-3.5 h-3.5 text-black" />
-              </Link>
+            <div className="mt-8 pt-4 border-t border-white/[0.06] space-y-2">
+              {isAuthenticated && currentProfile.role === 'admin' ? (
+                <Link
+                  href="/admin"
+                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-black font-semibold rounded-full text-xs py-3 px-4 flex items-center justify-center gap-2 w-full transition shadow-[0_2px_12px_rgba(245,158,11,0.25)] active:scale-[0.98]"
+                >
+                  <ShieldCheck className="w-4 h-4 text-black" />
+                  <span>Enter Super Admin Suite</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-black" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('admin', 'signin')}
+                  className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-black font-semibold rounded-full text-xs py-3 px-4 flex items-center justify-center gap-2 w-full transition shadow-[0_2px_12px_rgba(245,158,11,0.25)] active:scale-[0.98]"
+                >
+                  <Lock className="w-4 h-4 text-black" />
+                  <span>Sign In to Admin Vault</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-black" />
+                </button>
+              )}
+
+              <p className="text-[10px] text-center text-zinc-500 font-mono py-1">
+                Cryptographic vault access restricted to authorized admins
+              </p>
             </div>
           </div>
         </div>
@@ -376,14 +456,6 @@ export default function EnterprisePortalGateway() {
           </div>
         </div>
       </footer>
-
-      {/* Supabase Authentication Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        defaultRole={targetAuthRole}
-        onSuccess={handleAuthSuccess}
-      />
     </div>
   );
 }

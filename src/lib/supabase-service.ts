@@ -36,6 +36,12 @@ export const SupabaseService = {
         paymentMode: 'PARTNER_ESCROW_UPI',
         partnerId: row.matched_partner_id,
         cardholderCommission: Number(row.partner_commission || 0),
+        attemptCount: row.attempt_count || 1,
+        maxAttempts: row.max_attempts || 4,
+        declinedPartnerIds: row.declined_partner_ids || [],
+        failureReason: row.failure_reason,
+        refundRef: row.refund_ref,
+        refundTimestamp: row.refund_timestamp,
         status: row.status as EscrowOrderStatus,
         merchantOrderRef: row.merchant_order_id,
         awbTrackingNumber: row.tracking_number,
@@ -82,6 +88,7 @@ export const SupabaseService = {
           status,
           merchant_order_id: updates?.merchantOrderRef,
           tracking_number: updates?.awbTrackingNumber,
+          admin_notes: updates?.failureReason ? `Fail: ${updates.failureReason}` : (updates?.refundRef ? `Refund: ${updates.refundRef}` : undefined),
           updated_at: new Date().toISOString(),
         })
         .eq('id', orderId);

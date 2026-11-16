@@ -148,6 +148,7 @@ export type EscrowOrderStatus =
   | 'RETURN_WINDOW_CLOSED'
   | 'SETTLED'
   | 'CANCELLED'
+  | 'REFUNDED'
   | 'DISPUTED';
 
 export interface EscrowOrder {
@@ -176,6 +177,16 @@ export interface EscrowOrder {
   partnerCardUsed?: string;
   cardholderCommission?: number;
   platformFee?: number;
+  
+  // Dynamic P2P Matching, Retry & Fail-safe Refund
+  requiredBank?: string;
+  requiredCardName?: string;
+  attemptCount: number; // 1 to 4
+  maxAttempts: number; // default 4
+  declinedPartnerIds?: string[];
+  failureReason?: string;
+  refundRef?: string;
+  refundTimestamp?: string;
   
   status: EscrowOrderStatus;
   merchantOrderRef?: string;
@@ -272,4 +283,78 @@ export interface CustomerOnboardingRecord {
   totalOrders: number;
   totalSaved: number;
   joinedAt: string;
+}
+
+// -------------------------------------------------------------
+// Real-World Notification System Types
+// -------------------------------------------------------------
+export type NotificationType = 'info' | 'success' | 'warning' | 'error' | 'otp' | 'order';
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  timestamp: string;
+  read: boolean;
+  link?: string;
+  otpCode?: string;
+  orderId?: string;
+}
+
+// -------------------------------------------------------------
+// Real-World Portal Authentication Types
+// -------------------------------------------------------------
+export type PortalRole = 'user' | 'partner' | 'admin';
+export type AuthModalTab = 'signin' | 'register' | 'forgot_password';
+
+export interface AuthModalState {
+  isOpen: boolean;
+  portal: PortalRole;
+  tab: AuthModalTab;
+}
+
+export interface PortalCredential {
+  portal: PortalRole;
+  portalName: string;
+  email: string;
+  password: string;
+  role: PortalRole;
+  name: string;
+  description: string;
+  badge: string;
+}
+
+export interface UserRegistrationData {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: 'user' | 'partner';
+  userId?: string;
+  city?: string;
+  primaryBank?: string;
+  cardName?: string;
+}
+
+export interface RegisteredUserAccount {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  phone: string;
+  passwordHash: string;
+  role: PortalRole;
+  city: string;
+  avatar: string;
+  kycVerified: boolean;
+  createdAt: string;
+  primaryBank?: string;
+  cardName?: string;
+}
+
+export interface PasswordResetState {
+  identifier: string;
+  otp: string;
+  expiresAt: number;
 }

@@ -20,7 +20,54 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   children,
 }) => {
   const router = useRouter();
-  const { currentProfile, logout } = useCompareCart();
+  const { currentProfile, logout, isAuthenticated, openAuthModal } = useCompareCart();
+
+  const portalKey = allowedRoles.includes('admin')
+    ? 'admin'
+    : allowedRoles.includes('partner')
+    ? 'partner'
+    : 'user';
+
+  // 1. If not authenticated at all, prompt login modal & credentials request
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center p-4">
+        <div className="bg-[#141416]/98 backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center relative overflow-hidden animate-fade-in space-y-4">
+          <div className="w-14 h-14 rounded-full bg-[#d4a017]/15 border border-[#d4a017]/30 text-[#d4a017] flex items-center justify-center mx-auto">
+            <Lock className="w-7 h-7" />
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-zinc-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
+            <span>AUTHENTICATION REQUIRED</span>
+          </div>
+
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+            Sign In to Access {portalName}
+          </h2>
+
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
+            Please log in with your <strong>Username / User ID, Mobile Number, or Email</strong> and <strong>Password</strong> to access this portal.
+          </p>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+            <button
+              onClick={() => openAuthModal(portalKey)}
+              className="py-3 px-6 rounded-2xl bg-gradient-to-r from-[#d4a017] to-[#b38312] text-black font-bold text-xs shadow-lg shadow-[#d4a017]/25 hover:from-[#e5b329] hover:to-[#c69415] transition flex items-center justify-center gap-2"
+            >
+              <Lock className="w-4 h-4 text-black" />
+              <span>Sign In with Credentials</span>
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              className="py-3 px-6 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition"
+            >
+              Return to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Super Admin has universal oversight across all portals as per design specifications
   const isAuthorized = currentProfile.role === 'admin' || allowedRoles.includes(currentProfile.role);
@@ -78,8 +125,19 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
           </span>
         </div>
 
+        {/* Switch Account Option */}
+        <div className="mt-4">
+          <button
+            onClick={() => openAuthModal(portalKey)}
+            className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:text-white hover:bg-amber-500/25 transition text-xs font-semibold flex items-center justify-center gap-2"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Sign In with {requiredRoleTitle} Account</span>
+          </button>
+        </div>
+
         {/* Strict Return Navigation */}
-        <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
+        <div className="mt-4 flex flex-col sm:flex-row gap-2.5">
           <Link
             href={userPortalUrl}
             className="apple-pill-btn flex-1 py-3 px-4 flex items-center justify-center gap-2 text-xs"

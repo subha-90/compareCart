@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -18,11 +18,14 @@ import {
   Sliders,
   ExternalLink,
   Sun,
-  Moon
+  Moon,
+  Lock,
+  KeyRound
 } from 'lucide-react';
 import { SystemMetrics, useCompareCart } from '../lib/store';
 import { useTheme } from '../lib/theme';
 import { Logo } from './Logo';
+import { NotificationCenter } from './NotificationCenter';
 
 interface NavbarProps {
   currentPortal?: 'user' | 'partner' | 'admin';
@@ -37,9 +40,45 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { currentProfile, switchProfile, logout, cartItems, metrics: storeMetrics } = useCompareCart();
+  const {
+    currentProfile,
+    switchProfile,
+    logout,
+    cartItems,
+    metrics: storeMetrics,
+    isAuthenticated,
+    openAuthModal,
+  } = useCompareCart();
   const { theme, toggleTheme } = useTheme();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close profile dropdown when clicking anywhere outside or pressing Escape
+  useEffect(() => {
+    if (!isProfileMenuOpen) return;
+
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isProfileMenuOpen]);
 
   const metrics = controlledMetrics || storeMetrics;
 
@@ -186,6 +225,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               </nav>
             )}
 
+            {/* Real-World Notification Center Bell */}
+            <NotificationCenter />
+
             {/* Day / Night Mode Toggle (Golden Light Grey & Space Black) */}
             <button
               onClick={toggleTheme}
@@ -205,107 +247,131 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Apple-style Profile Pill */}
-            <div className="relative">
+            {/* Authentication: Profile Pill or Sign In CTA */}
+            {isAuthenticated ? (
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="flex items-center gap-2 bg-[#1c1c1e]/90 hover:bg-[#2c2c2e] p-1 pr-2.5 rounded-full border border-white/10 transition"
+                >
+                  <img
+                    src={currentProfile.avatar}
+                    alt={currentProfile.name}
+                    className="w-6 h-6 rounded-full object-cover"
+                  />
+                  <span className="text-[12px] font-medium text-white hidden md:inline">
+                    {currentProfile.name.split(' ')[0]}
+                  </span>
+                  <ChevronDown className="w-3 h-3 text-[#86868b]" />
+                </button>
+
+                {/* Apple-style Action Sheet Dropdown */}
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-[#1c1c1e]/95 backdrop-blur-3xl rounded-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-fade-in space-y-1">
+                    {/* Identity */}
+                    <div className="p-2.5 border-b border-white/[0.08]">
+                      <p className="text-xs font-semibold text-white">{currentProfile.name}</p>
+                      <p className="text-[11px] text-[#86868b]">{currentProfile.email}</p>
+                      <div className="mt-1.5 flex items-center justify-between">
+                        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white font-medium uppercase">
+                          {currentProfile.role}
+                        </span>
+                        <span className="text-[10px] text-[#86868b]">{currentProfile.city}</span>
+                      </div>
+                    </div>
+
+                    {/* Switch / Log In with Credentials */}
+                    <div className="py-1 border-b border-white/[0.08]">
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          openAuthModal(currentPortal);
+                        }}
+                        className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-[#d4a017] hover:bg-[#d4a017]/10 transition font-medium"
+                      >
+                        <KeyRound className="w-3.5 h-3.5" />
+                        <span>Switch Portal / Credentials</span>
+                      </button>
+                    </div>
+
+                    {/* Admin Perspective Switching */}
+                    {isAdmin ? (
+                      <div className="pt-1 border-b border-white/[0.08] pb-1">
+                        <span className="text-[10px] text-[#86868b] uppercase font-semibold tracking-wider px-2 block mb-1">
+                          Perspective Switching
+                        </span>
+
+                        <button
+                          onClick={() => handleAdminPortalSwitch('user')}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
+                            currentPortal === 'user' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <ShoppingBag className="w-3.5 h-3.5 text-[#30d158]" />
+                            <span>Consumer Portal</span>
+                          </div>
+                          {currentPortal === 'user' && <Check className="w-3.5 h-3.5 text-white" />}
+                        </button>
+
+                        <button
+                          onClick={() => handleAdminPortalSwitch('partner')}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
+                            currentPortal === 'partner' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="w-3.5 h-3.5 text-[#2997ff]" />
+                            <span>Card Partner Portal</span>
+                          </div>
+                          {currentPortal === 'partner' && <Check className="w-3.5 h-3.5 text-white" />}
+                        </button>
+
+                        <button
+                          onClick={() => handleAdminPortalSwitch('admin')}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
+                            currentPortal === 'admin' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Super Admin Suite</span>
+                          </div>
+                          {currentPortal === 'admin' && <Check className="w-3.5 h-3.5 text-white" />}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="py-1.5 border-b border-white/[0.08] px-2 text-[11px] text-[#86868b]">
+                        {currentProfile.role === 'user' ? (
+                          <p>Universal Price Comparison & Cart Escrow</p>
+                        ) : (
+                          <p>Cardholder Liquidity Pool & Instant Nodal Settlement</p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Sign Out */}
+                    <div className="pt-1">
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-red-400 hover:bg-red-500/10 transition font-medium"
+                      >
+                        <LogOut className="w-3.5 h-3.5 text-red-400" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
               <button
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2 bg-[#1c1c1e]/90 hover:bg-[#2c2c2e] p-1 pr-2.5 rounded-full border border-white/10 transition"
+                onClick={() => openAuthModal(currentPortal)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-[#d4a017] to-[#b38312] text-black hover:from-[#e5b329] hover:to-[#c69415] transition shadow-md shadow-[#d4a017]/25"
               >
-                <img
-                  src={currentProfile.avatar}
-                  alt={currentProfile.name}
-                  className="w-6 h-6 rounded-full object-cover"
-                />
-                <span className="text-[12px] font-medium text-white hidden md:inline">
-                  {currentProfile.name.split(' ')[0]}
-                </span>
-                <ChevronDown className="w-3 h-3 text-[#86868b]" />
+                <Lock className="w-3.5 h-3.5 text-black" />
+                <span>Sign In / Register</span>
               </button>
-
-              {/* Apple-style Action Sheet Dropdown */}
-              {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-[#1c1c1e]/95 backdrop-blur-3xl rounded-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-fade-in space-y-1">
-                  {/* Identity */}
-                  <div className="p-2.5 border-b border-white/[0.08]">
-                    <p className="text-xs font-semibold text-white">{currentProfile.name}</p>
-                    <p className="text-[11px] text-[#86868b]">{currentProfile.email}</p>
-                    <div className="mt-1.5 flex items-center justify-between">
-                      <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white font-medium uppercase">
-                        {currentProfile.role}
-                      </span>
-                      <span className="text-[10px] text-[#86868b]">{currentProfile.city}</span>
-                    </div>
-                  </div>
-
-                  {/* Admin Perspective Switching */}
-                  {isAdmin ? (
-                    <div className="pt-1 border-b border-white/[0.08] pb-1">
-                      <span className="text-[10px] text-[#86868b] uppercase font-semibold tracking-wider px-2 block mb-1">
-                        Perspective Switching
-                      </span>
-
-                      <button
-                        onClick={() => handleAdminPortalSwitch('user')}
-                        className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
-                          currentPortal === 'user' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <ShoppingBag className="w-3.5 h-3.5 text-[#30d158]" />
-                          <span>Consumer Portal</span>
-                        </div>
-                        {currentPortal === 'user' && <Check className="w-3.5 h-3.5 text-white" />}
-                      </button>
-
-                      <button
-                        onClick={() => handleAdminPortalSwitch('partner')}
-                        className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
-                          currentPortal === 'partner' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <CreditCard className="w-3.5 h-3.5 text-[#2997ff]" />
-                          <span>Card Partner Portal</span>
-                        </div>
-                        {currentPortal === 'partner' && <Check className="w-3.5 h-3.5 text-white" />}
-                      </button>
-
-                      <button
-                        onClick={() => handleAdminPortalSwitch('admin')}
-                        className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
-                          currentPortal === 'admin' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                          <span>Super Admin Suite</span>
-                        </div>
-                        {currentPortal === 'admin' && <Check className="w-3.5 h-3.5 text-white" />}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="py-1.5 border-b border-white/[0.08] px-2 text-[11px] text-[#86868b]">
-                      {currentProfile.role === 'user' ? (
-                        <p>Universal Price Comparison & Cart Escrow</p>
-                      ) : (
-                        <p>Cardholder Liquidity Pool & Instant Nodal Settlement</p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Sign Out */}
-                  <div className="pt-1">
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-red-400 hover:bg-red-500/10 transition font-medium"
-                    >
-                      <LogOut className="w-3.5 h-3.5 text-red-400" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
