@@ -48,6 +48,8 @@ interface UserPortalProps {
   handleTriggerLiveScrape: (q?: string) => void;
   onSelectPartnerCard: (deal: OptimizedDeal) => void;
   onSelectDirect: (deal: OptimizedDeal) => void;
+  activeTab?: 'browse' | 'loved' | 'cart' | 'purchases';
+  setActiveTab?: (tab: 'browse' | 'loved' | 'cart' | 'purchases') => void;
 }
 
 export const UserPortal: React.FC<UserPortalProps> = ({
@@ -67,6 +69,8 @@ export const UserPortal: React.FC<UserPortalProps> = ({
   handleTriggerLiveScrape,
   onSelectPartnerCard,
   onSelectDirect,
+  activeTab: externalActiveTab,
+  setActiveTab: externalSetActiveTab,
 }) => {
   const {
     lovedProductIds,
@@ -80,7 +84,9 @@ export const UserPortal: React.FC<UserPortalProps> = ({
     matchCardholder,
   } = useCompareCart();
 
-  const [activeTab, setActiveTab] = useState<'browse' | 'loved' | 'cart' | 'purchases'>('browse');
+  const [internalActiveTab, setInternalActiveTab] = useState<'browse' | 'loved' | 'cart' | 'purchases'>('browse');
+  const activeTab = externalActiveTab !== undefined ? externalActiveTab : internalActiveTab;
+  const setActiveTab = externalSetActiveTab || setInternalActiveTab;
   const [cartNotice, setCartNotice] = useState<string | null>(null);
 
   // Dynamic 3D Tilt & Parallax State (Pinterest Dynamic Hero Design)

@@ -180,6 +180,8 @@ export interface EscrowOrder {
   status: EscrowOrderStatus;
   merchantOrderRef?: string;
   awbTrackingNumber?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
   createdAt: string;
   estimatedDelivery: string;
   returnWindowEndDate: string;

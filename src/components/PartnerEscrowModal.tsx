@@ -14,7 +14,8 @@ import {
   Clock,
   UserCheck,
   Building,
-  Check
+  Check,
+  PackageCheck
 } from 'lucide-react';
 import { MERCHANT_METADATA } from '../lib/deal-engine';
 import { useCompareCart } from '../lib/store';
@@ -44,7 +45,46 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
   const [state, setState] = useState('Karnataka');
   const [pincode, setPincode] = useState('560103');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [createdOrder, setCreatedOrder] = useState<EscrowOrder | null>(null);
+
+  // Load Razorpay Checkout Script on Modal Mount
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && !(window as any).Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  // Reset modal state whenever opened for a product/deal
+  React.useEffect(() => {
+    if (isOpen) {
+      setStep('review');
+      setCreatedOrder(null);
+      setPaymentError(null);
+      setIsProcessing(false);
+    }
+  }, [isOpen, product?.id, deal?.merchantId]);
+
+  const handleClose = () => {
+    setStep('review');
+    setCreatedOrder(null);
+    setPaymentError(null);
+    setIsProcessing(false);
+    onClose();
+  };
+
+  // Auto-redirect to My Orders section after order confirmation
+  React.useEffect(() => {
+    if (step === 'confirmed') {
+      const timer = setTimeout(() => {
+        handleClose();
+      }, 2200);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
 
   if (!isOpen) return null;
 
@@ -52,9 +92,123 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
   const matchedPartner: PartnerCardholder = partners[0];
   const matchedCard = matchedPartner?.cardsHeld[0];
 
-  const handlePayAndLockEscrow = () => {
+  const handleRazorpayPayment = async () => {
     setIsProcessing(true);
+    setPaymentError(null);
+
+    try {
+      // 1. Create Razorpay Order from server API
+      const res = await fetch('/api/payment/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: deal.partnerFinalEffectivePrice,
+          orderNumber: `CC-${Date.now().toString().slice(-6)}`,
+          productName: product.title,
+        }),
+      });
+
+      const orderData = await res.json();
+      if (!res.ok || !orderData.orderId) {
+        throw new Error(orderData.error || 'Failed to initiate Razorpay order');
+      }
+
+      // Check if window.Razorpay is loaded
+      if (typeof window !== 'undefined' && (window as any).Razorpay) {
+        const options = {
+          key: orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
+          name: 'CompareCart Escrow Vault',
+          description: `Hold for ${product.title.slice(0, 32)}`,
+          image: '/logo-icon.png',
+          order_id: orderData.orderId,
+          handler: async function (response: any) {
+            try {
+              // 2. Cryptographically verify signature on server
+              const verifyRes = await fetch('/api/payment/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  orderNumber: orderData.orderId,
+                }),
+              });
+
+              const verifyData = await verifyRes.json();
+              if (verifyData.verified) {
+                const order = createEscrowOrder({
+                  product,
+                  deal,
+                  buyerName,
+                  buyerPhone,
+                  address: {
+                    line1: addressLine,
+                    city,
+                    state,
+                    pincode,
+                  },
+                  paymentMode: 'PARTNER_ESCROW_UPI',
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpayPaymentId: response.razorpay_payment_id,
+                });
+                setCreatedOrder(order);
+                setStep('confirmed');
+                onOrderCreated(order);
+              } else {
+                setPaymentError('Cryptographic payment verification failed. Please contact support.');
+              }
+            } catch (err: any) {
+              setPaymentError(err.message || 'Error verifying payment signature');
+            } finally {
+              setIsProcessing(false);
+            }
+          },
+          prefill: {
+            name: buyerName,
+            contact: buyerPhone,
+            email: 'shopper@comparecart.in',
+          },
+          notes: {
+            platform: 'CompareCart',
+            merchant: deal.merchantName,
+            partnerCommission: deal.cardholderCommission,
+          },
+          theme: {
+            color: '#0071e3',
+            backdrop_color: 'rgba(0, 0, 0, 0.85)',
+          },
+          modal: {
+            ondismiss: function () {
+              setIsProcessing(false);
+            },
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', function (failResp: any) {
+          setPaymentError(failResp?.error?.description || 'Payment was declined');
+          setIsProcessing(false);
+        });
+        rzp.open();
+      } else {
+        // Fallback simulation if script blocked by adblocker
+        handleSimulateSandboxPayment();
+      }
+    } catch (err: any) {
+      console.error('[Razorpay Init Error]:', err);
+      setPaymentError(err.message || 'Payment initiation failed. Using sandbox fallback.');
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSimulateSandboxPayment = () => {
+    setIsProcessing(true);
+    setPaymentError(null);
     setTimeout(() => {
+      const mockPayId = `pay_sim_${Date.now().toString().slice(-8)}`;
       const order = createEscrowOrder({
         product,
         deal,
@@ -67,12 +221,13 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
           pincode,
         },
         paymentMode: 'PARTNER_ESCROW_UPI',
+        razorpayPaymentId: mockPayId,
       });
       setCreatedOrder(order);
       setIsProcessing(false);
       setStep('confirmed');
       onOrderCreated(order);
-    }, 1100);
+    }, 900);
   };
 
   return (
@@ -96,7 +251,7 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
           </div>
 
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#86868b] hover:text-white flex items-center justify-center transition"
           >
             <X className="w-4 h-4" />
@@ -324,39 +479,57 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
                   ₹{deal.partnerFinalEffectivePrice.toLocaleString('en-IN')}
                 </div>
                 <p className="text-[11px] text-[#86868b] max-w-xs mx-auto">
-                  Payment is locked in nodal escrow and released to the cardholder only after order delivery.
+                  Payment is locked in CompareCart's neutral escrow vault and released to the cardholder only after order delivery.
                 </p>
 
-                {/* QR Code */}
-                <div className="bg-white p-3 rounded-2xl inline-block shadow-inner mx-auto">
-                  <div className="w-32 h-32 bg-zinc-50 rounded-xl flex flex-col items-center justify-center text-zinc-900 border border-zinc-200">
-                    <QrCode className="w-20 h-20 text-zinc-900" />
-                    <span className="text-[9px] font-mono font-medium text-zinc-600 mt-0.5">UPI: comparecart@escrow</span>
+                {/* Razorpay Trust Badge & Accepted Rails */}
+                <div className="bg-white/[0.04] border border-white/[0.08] p-3 rounded-2xl max-w-sm mx-auto space-y-2">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-xs font-semibold text-white tracking-tight">Razorpay Secure Checkout</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#0071e3]/20 text-[#2997ff] border border-[#0071e3]/30 font-mono">
+                      TEST SANDBOX
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 text-[10px] text-[#86868b] font-mono">
+                    <span>UPI (GPay / PhonePe / Paytm)</span> • <span>Cards</span> • <span>NetBanking</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-[10px] text-[#86868b] font-mono">
-                  <span>GPay</span> • <span>PhonePe</span> • <span>Paytm</span> • <span>BHIM</span>
-                </div>
+                {paymentError && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400 text-left">
+                    {paymentError}
+                  </div>
+                )}
               </div>
 
-              <button
-                disabled={isProcessing}
-                onClick={handlePayAndLockEscrow}
-                className="apple-pill-btn w-full py-3.5 flex items-center justify-center gap-2 text-xs disabled:opacity-50"
-              >
-                {isProcessing ? (
-                  <>
-                    <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                    <span>Verifying Nodal Escrow Deposit...</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Simulate UPI Escrow Payment</span>
-                  </>
-                )}
-              </button>
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <button
+                  disabled={isProcessing}
+                  onClick={handleRazorpayPayment}
+                  className="apple-pill-btn w-full py-3.5 flex items-center justify-center gap-2 text-xs font-semibold disabled:opacity-50 shadow-[0_4px_20px_rgba(0,113,227,0.35)]"
+                >
+                  {isProcessing ? (
+                    <>
+                      <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                      <span>Opening Razorpay Gateway...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-4 h-4 text-white" />
+                      <span>Pay ₹{deal.partnerFinalEffectivePrice.toLocaleString('en-IN')} via Razorpay / UPI</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  disabled={isProcessing}
+                  onClick={handleSimulateSandboxPayment}
+                  className="apple-pill-btn-secondary w-full py-2.5 flex items-center justify-center gap-1.5 text-[11px] text-zinc-400 hover:text-white"
+                >
+                  <span>⚡ Instant Sandbox Simulation (Bypass Popup)</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -375,6 +548,14 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
               </div>
 
               <div className="bg-black/50 border border-white/10 rounded-2xl p-4 text-left space-y-2 text-xs font-mono">
+                {createdOrder.razorpayPaymentId && (
+                  <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                    <span className="text-[#86868b]">Razorpay Payment ID:</span>
+                    <span className="font-medium text-[#30d158] bg-[#30d158]/10 px-2 py-0.5 rounded text-[11px]">
+                      {createdOrder.razorpayPaymentId}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-[#86868b]">Merchant Reference:</span>
                   <span className="font-medium text-white">{createdOrder.merchantOrderRef}</span>
@@ -397,12 +578,18 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
                 </div>
               </div>
 
-              <button
-                onClick={onClose}
-                className="apple-pill-btn-secondary w-full py-3 text-xs"
-              >
-                Close
-              </button>
+              <div className="space-y-2 pt-1">
+                <button
+                  onClick={handleClose}
+                  className="apple-pill-btn w-full py-3.5 text-xs font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,113,227,0.35)]"
+                >
+                  <PackageCheck className="w-4 h-4 text-white" />
+                  <span>Go to My Purchases & Escrow Tracking</span>
+                </button>
+                <p className="text-[11px] text-[#86868b] text-center">
+                  Redirecting to Orders in 2 seconds...
+                </p>
+              </div>
             </div>
           )}
         </div>

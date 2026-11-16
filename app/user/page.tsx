@@ -19,6 +19,7 @@ export default function UserPortalPage() {
   const [urlInput, setUrlInput] = useState('');
   const [isUrlMode, setIsUrlMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [activePortalTab, setActivePortalTab] = useState<'browse' | 'loved' | 'cart' | 'purchases'>('browse');
   const [activeDealForEscrow, setActiveDealForEscrow] = useState<OptimizedDeal | null>(null);
   const [isEscrowModalOpen, setIsEscrowModalOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
@@ -82,6 +83,7 @@ export default function UserPortalPage() {
 
   const handleOrderCreated = (order: EscrowOrder) => {
     setNotification(`Order ${order.orderNumber} successfully locked in Escrow!`);
+    setActivePortalTab('purchases');
     setTimeout(() => setNotification(null), 6000);
   };
 
@@ -193,6 +195,8 @@ export default function UserPortalPage() {
             handleTriggerLiveScrape={handleTriggerLiveScrape}
             onSelectPartnerCard={handleOpenEscrow}
             onSelectDirect={handleDirectMerchantClick}
+            activeTab={activePortalTab}
+            setActiveTab={setActivePortalTab}
           />
         </main>
       </RoleGuard>

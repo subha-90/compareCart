@@ -481,6 +481,8 @@ class CompareCartStore {
     buyerPhone: string;
     address: { line1: string; city: string; state: string; pincode: string };
     paymentMode: 'PARTNER_ESCROW_UPI' | 'SELF_CARD';
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
   }): EscrowOrder {
     const matchedPartner = params.paymentMode === 'PARTNER_ESCROW_UPI' && params.deal.partnerCard
       ? this.matchCardholder(
@@ -518,6 +520,8 @@ class CompareCartStore {
       status: 'ESCROW_DEPOSITED',
       merchantOrderRef: `OD${Math.floor(1000000000000 + Math.random() * 9000000000000)}`,
       awbTrackingNumber: `EXP-${Math.floor(100000 + Math.random() * 900000)}-IN`,
+      razorpayOrderId: params.razorpayOrderId,
+      razorpayPaymentId: params.razorpayPaymentId,
       createdAt: new Date().toISOString(),
       estimatedDelivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       returnWindowEndDate: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
