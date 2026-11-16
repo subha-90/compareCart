@@ -33,7 +33,7 @@ export const NotificationToastContainer: React.FC = () => {
     }, 200);
   };
 
-  // Listen for new notifications appearing in the store
+  // 1. Detect incoming unread notifications
   useEffect(() => {
     if (notifications.length === 0) return;
     const latest = notifications[0];
@@ -44,16 +44,24 @@ export const NotificationToastContainer: React.FC = () => {
       setActiveToast(latest);
       setIsClosing(false);
       setSeenIds(prev => new Set(prev).add(latest.id));
-
-      // Auto-dismiss after exactly 3 seconds (3000ms) for sign-out & standard toasts (8s for OTP)
-      const dismissDuration = latest.type === 'otp' ? 8000 : 3000;
-      const timer = setTimeout(() => {
-        handleDismiss();
-      }, dismissDuration);
-
-      return () => clearTimeout(timer);
     }
-  }, [notifications, seenIds, activeToast]);
+  }, [notifications, seenIds]);
+
+  // 2. Strict timer: Auto-dismiss all popups after 2.5 seconds
+  useEffect(() => {
+    if (!activeToast) return;
+
+    const autoDismissTimer = setTimeout(() => {
+      setIsClosing(true);
+      setTimeout(() => {
+        markNotificationAsRead(activeToast.id);
+        setActiveToast(null);
+        setIsClosing(false);
+      }, 200);
+    }, 2500);
+
+    return () => clearTimeout(autoDismissTimer);
+  }, [activeToast, markNotificationAsRead]);
 
   if (!activeToast) return null;
 

@@ -80,6 +80,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [rememberMe, setRememberMe] = useState(true);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [redirectTarget, setRedirectTarget] = useState<string>('');
+
+  // Prefetch portal routes for instantaneous transitions
+  useEffect(() => {
+    router.prefetch('/user');
+    router.prefetch('/partner');
+    router.prefetch('/admin');
+  }, [router]);
 
   // Registration State
   const [regRole, setRegRole] = useState<'user' | 'partner'>('user');
@@ -163,17 +172,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setLoginError(null);
     setIsLoading(true);
 
-    setTimeout(() => {
-      const result = loginWithIdentifier(identifier, password, selectedPortal);
-      setIsLoading(false);
-      if (result.success) {
-        if (propOnSuccess) propOnSuccess(result.targetPortal || selectedPortal);
+    const result = loginWithIdentifier(identifier, password, selectedPortal);
+    if (result.success) {
+      const target = result.targetPortal || selectedPortal;
+      const targetName = target === 'admin' ? 'Super Admin Vault' : target === 'partner' ? 'Card Partner Terminal' : 'Consumer Portal';
+      setIsRedirecting(true);
+      setRedirectTarget(targetName);
+      if (propOnSuccess) propOnSuccess(target);
+
+      // Immediately navigate to destination portal
+      router.push(`/${target}`);
+
+      // Smoothly dismiss modal after portal transition begins so user never sees main page flash
+      setTimeout(() => {
         handleClose();
-        router.push(`/${result.targetPortal || selectedPortal}`);
-      } else {
-        setLoginError(result.message);
-      }
-    }, 500);
+        setIsLoading(false);
+        setIsRedirecting(false);
+      }, 700);
+    } else {
+      setIsLoading(false);
+      setLoginError(result.message);
+    }
   };
 
   // Start Registration Flow (OTP to Mobile & Email)
@@ -575,10 +594,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#d4a017] to-[#b38312] hover:from-[#e5b329] hover:to-[#c69415] text-black font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-[#d4a017]/25 disabled:opacity-50"
+                disabled={isLoading || isRedirecting}
+                className={`w-full py-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg disabled:opacity-80 ${
+                  isRedirecting
+                    ? 'bg-emerald-400 text-black shadow-emerald-400/25'
+                    : 'bg-gradient-to-r from-[#d4a017] to-[#b38312] hover:from-[#e5b329] hover:to-[#c69415] text-black shadow-[#d4a017]/25'
+                }`}
               >
-                {isLoading ? (
+                {isRedirecting ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-black" />
+                    <span>Access Granted! Opening {redirectTarget}...</span>
+                  </>
+                ) : isLoading ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
                     <span>Verifying Access Rights...</span>
