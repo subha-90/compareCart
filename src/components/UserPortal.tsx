@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Product, OptimizedDeal, CartItem, EscrowOrder } from '../types';
 import { PriceHistoryChart } from './PriceHistoryChart';
+import { DealComparisonTable } from './DealComparisonTable';
 import { useCompareCart } from '../lib/store';
 import {
   Search,
@@ -109,9 +110,6 @@ export const UserPortal: React.FC<UserPortalProps> = ({
   const [isBankOffersModalOpen, setIsBankOffersModalOpen] = useState(false);
   const [isMyCardsModalOpen, setIsMyCardsModalOpen] = useState(false);
 
-  // Store comparison row expansion
-  const [showAllStores, setShowAllStores] = useState(false);
-
   // Sync external tab when provided
   const handleTabChange = (tab: NavTab) => {
     setNavTab(tab);
@@ -142,6 +140,13 @@ export const UserPortal: React.FC<UserPortalProps> = ({
   const getDealSavings = (deal: OptimizedDeal | null | undefined): number => {
     if (!deal) return 0;
     return deal.partnerCardEligible ? (deal.buyerSavings + deal.couponDiscount) : deal.effectiveDiscountTotal;
+  };
+
+  const executeSearchOrScrape = (q?: string) => {
+    const target = (q !== undefined ? q : (isUrlMode ? urlInput : searchQuery)).trim();
+    if (!target) return;
+    handleTriggerLiveScrape(target);
+    handleTabChange('compare');
   };
 
   // Filtered products for search & category
@@ -281,15 +286,21 @@ export const UserPortal: React.FC<UserPortalProps> = ({
                 </div>
               </div>
 
-              {/* Pill Search Bar with Barcode/Link Scanner Icon */}
+              {/* Pill Search Bar with Enter-to-Scrape & Scan Action */}
               <div className="mt-8 relative max-w-2xl">
                 <div className="relative flex items-center bg-white dark:bg-[#252837] rounded-full border border-slate-300 dark:border-white/10 shadow-lg px-4 py-2 sm:py-2.5 transition-all focus-within:border-[#2864FF] focus-within:ring-2 focus-within:ring-[#2864FF]/20">
-                  <Search className="w-5 h-5 text-slate-400 dark:text-slate-400 mr-3 shrink-0" />
+                  <Search className="w-5 h-5 text-slate-400 mr-2.5 shrink-0" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for a product, brand or link"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        executeSearchOrScrape();
+                      }
+                    }}
+                    placeholder="Search for iPhone 17, brand, or paste product link"
                     className="w-full bg-transparent text-sm sm:text-base text-[#101936] dark:text-white placeholder:text-slate-400 focus:outline-none"
                   />
                   {searchQuery && (
@@ -302,21 +313,42 @@ export const UserPortal: React.FC<UserPortalProps> = ({
                   )}
                   <button
                     onClick={() => {
-                      setIsUrlMode(!isUrlMode);
-                      if (!isUrlMode) {
-                        const target = prompt('Paste product link from Flipkart, Amazon, Croma, Reliance or Vijay Sales:');
-                        if (target) {
-                          setUrlInput(target);
-                          handleTriggerLiveScrape(target);
-                        }
+                      const target = prompt('Paste product link from Flipkart, Amazon, Croma, Reliance or Vijay Sales:');
+                      if (target) {
+                        setUrlInput(target);
+                        executeSearchOrScrape(target);
                       }
                     }}
-                    title="Scan or Paste Link"
+                    title="Paste Product Link"
                     className="p-2 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 transition shrink-0 ml-1"
                   >
                     <Scan className="w-4 h-4" />
                   </button>
+                  <button
+                    onClick={() => executeSearchOrScrape()}
+                    disabled={isLiveScraping || !searchQuery.trim()}
+                    className="px-4 py-1.5 rounded-full cc-gradient-btn text-white text-xs font-semibold shadow-glow-blue disabled:opacity-50 flex items-center gap-1.5 shrink-0 ml-1.5 hover:scale-105 transition"
+                  >
+                    {isLiveScraping ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span className="hidden sm:inline">Scraping...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Search className="w-3.5 h-3.5" />
+                        <span>Search</span>
+                      </>
+                    )}
+                  </button>
                 </div>
+
+                {isLiveScraping && (
+                  <div className="absolute -bottom-6 left-4 flex items-center gap-1.5 text-[11px] text-[#2864FF] font-medium animate-pulse">
+                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    <span>Scraping live prices across Flipkart, Amazon, Croma, Reliance &amp; Vijay Sales...</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -609,7 +641,7 @@ export const UserPortal: React.FC<UserPortalProps> = ({
             {/* TAB CONTENT: COMPARE */}
             {compareSubTab === 'compare' && (
               <div className="space-y-4">
-                {/* Best Price Green Callout Banner (Matches Reference Concept) */}
+                {/* Best Price Green Callout Banner */}
                 {bestDeal && (
                   <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/30 flex items-center justify-between shadow-soft">
                     <div className="flex items-center gap-3">
@@ -627,72 +659,13 @@ export const UserPortal: React.FC<UserPortalProps> = ({
                   </div>
                 )}
 
-                {/* Store Comparison List */}
-                <div className="rounded-3xl bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 divide-y divide-slate-100 dark:divide-white/5 shadow-soft overflow-hidden">
-                  {optimizedDeals
-                    .slice(0, showAllStores ? undefined : 3)
-                    .map((deal) => {
-                      const meta = MERCHANT_METADATA[deal.merchantId];
-                      const dealPrice = getDealPrice(deal);
-                      const dealSavings = getDealSavings(deal);
-                      return (
-                        <div
-                          key={deal.merchantId}
-                          className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition"
-                        >
-                          {/* Store Info */}
-                          <div className="flex items-center gap-3.5">
-                            <div
-                              className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-xs shadow-sm shrink-0"
-                              style={{ backgroundColor: meta.color }}
-                            >
-                              {meta.logoText}
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-bold text-[#101936] dark:text-white">{meta.name}</h4>
-                              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                {deal.partnerCard ? `${deal.partnerCard.bank} Offer Unlocked` : 'Direct Store Price'}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Price & CTA Button */}
-                          <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="text-right">
-                              <p className="text-base sm:text-lg font-black text-[#101936] dark:text-white">
-                                ₹{dealPrice.toLocaleString('en-IN')}
-                              </p>
-                              {dealSavings > 0 && (
-                                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold line-through">
-                                  ₹{deal.listedPrice.toLocaleString('en-IN')}
-                                </p>
-                              )}
-                            </div>
-
-                            <button
-                              onClick={() => onSelectPartnerCard(deal)}
-                              className="px-4 py-2 rounded-full cc-gradient-btn text-white text-xs font-semibold shadow-glow-blue hover:scale-105 transition"
-                            >
-                              Get offer
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-
-                {/* Expand / Collapse More Stores */}
-                {optimizedDeals.length > 3 && (
-                  <div className="text-center">
-                    <button
-                      onClick={() => setShowAllStores(!showAllStores)}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-[#101936] dark:hover:text-white py-2"
-                    >
-                      <span>{showAllStores ? 'Show less stores' : `View ${optimizedDeals.length - 3} more stores`}</span>
-                      <ChevronDown className={`w-4 h-4 transition-transform ${showAllStores ? 'rotate-180' : ''}`} />
-                    </button>
-                  </div>
-                )}
+                {/* Verified Merchant & Card Offer Matrix (Original Rich Comparison Card) */}
+                <DealComparisonTable
+                  product={selectedProduct}
+                  deals={optimizedDeals}
+                  onSelectPartnerCard={onSelectPartnerCard}
+                  onSelectDirect={onSelectDirect}
+                />
               </div>
             )}
 
