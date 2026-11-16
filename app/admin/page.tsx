@@ -6,14 +6,12 @@ import { useCompareCart } from '../../src/lib/store';
 import { Navbar } from '../../src/components/Navbar';
 import { AdminPortal } from '../../src/components/AdminPortal';
 import { RoleGuard } from '../../src/modules/shared/RoleGuard';
-import { ArchitectureModal } from '../../src/components/ArchitectureModal';
 import { Logo } from '../../src/components/Logo';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export default function AdminPortalPage() {
   const router = useRouter();
   const { metrics, switchProfile } = useCompareCart();
-  const [isArchModalOpen, setIsArchModalOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
   const handleSwitchRole = (role: 'user' | 'partner' | 'admin') => {
@@ -31,7 +29,6 @@ export default function AdminPortalPage() {
       <Navbar
         currentPortal="admin"
         metrics={metrics}
-        onOpenArchModal={() => setIsArchModalOpen(true)}
       />
 
       {notification && (
@@ -63,21 +60,12 @@ export default function AdminPortalPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsArchModalOpen(true)} className="text-zinc-400 hover:text-white transition underline">
-              Architecture & Scalability
-            </button>
-            <span className="text-zinc-700">•</span>
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> Full Audit Trail Logged
             </span>
           </div>
         </div>
       </footer>
-
-      <ArchitectureModal
-        isOpen={isArchModalOpen}
-        onClose={() => setIsArchModalOpen(false)}
-      />
     </div>
   );
 }

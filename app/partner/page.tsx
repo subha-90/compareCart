@@ -5,20 +5,17 @@ import { useCompareCart } from '../../src/lib/store';
 import { Navbar } from '../../src/components/Navbar';
 import { PartnerPortal } from '../../src/components/PartnerPortal';
 import { RoleGuard } from '../../src/modules/shared/RoleGuard';
-import { ArchitectureModal } from '../../src/components/ArchitectureModal';
 import { Logo } from '../../src/components/Logo';
 import { ShieldCheck } from 'lucide-react';
 
 export default function PartnerPortalPage() {
   const { metrics } = useCompareCart();
-  const [isArchModalOpen, setIsArchModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col luxury-mesh-bg text-zinc-100 font-sans selection:bg-emerald-500 selection:text-black">
       <Navbar
         currentPortal="partner"
         metrics={metrics}
-        onOpenArchModal={() => setIsArchModalOpen(true)}
       />
 
       <RoleGuard
@@ -40,21 +37,12 @@ export default function PartnerPortalPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsArchModalOpen(true)} className="text-zinc-400 hover:text-white transition underline">
-              Architecture & Scalability
-            </button>
-            <span className="text-zinc-700">•</span>
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> RBI Nodal Bank Settlement
             </span>
           </div>
         </div>
       </footer>
-
-      <ArchitectureModal
-        isOpen={isArchModalOpen}
-        onClose={() => setIsArchModalOpen(false)}
-      />
     </div>
   );
 }

@@ -28,14 +28,12 @@ interface NavbarProps {
   currentPortal?: 'user' | 'partner' | 'admin';
   setCurrentPortal?: (portal: 'user' | 'partner' | 'admin') => void;
   metrics?: SystemMetrics;
-  onOpenArchModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentPortal: controlledPortal,
   setCurrentPortal,
   metrics: controlledMetrics,
-  onOpenArchModal,
 }) => {
   const router = useRouter();
   const pathname = usePathname();

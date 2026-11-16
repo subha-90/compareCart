@@ -6,7 +6,6 @@ import { Navbar } from '../../src/components/Navbar';
 import { UserPortal } from '../../src/components/UserPortal';
 import { RoleGuard } from '../../src/modules/shared/RoleGuard';
 import { PartnerEscrowModal } from '../../src/components/PartnerEscrowModal';
-import { ArchitectureModal } from '../../src/components/ArchitectureModal';
 import { Product, OptimizedDeal, EscrowOrder } from '../../src/types';
 import { Logo } from '../../src/components/Logo';
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
@@ -22,7 +21,6 @@ export default function UserPortalPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeDealForEscrow, setActiveDealForEscrow] = useState<OptimizedDeal | null>(null);
   const [isEscrowModalOpen, setIsEscrowModalOpen] = useState(false);
-  const [isArchModalOpen, setIsArchModalOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [isLiveScraping, setIsLiveScraping] = useState(false);
   const [liveScrapeStatus, setLiveScrapeStatus] = useState<{ source: string; durationMs: number } | null>(null);
@@ -163,7 +161,6 @@ export default function UserPortalPage() {
       <Navbar
         currentPortal="user"
         metrics={metrics}
-        onOpenArchModal={() => setIsArchModalOpen(true)}
       />
 
       {notification && (
@@ -209,10 +206,6 @@ export default function UserPortalPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsArchModalOpen(true)} className="text-zinc-400 hover:text-white transition underline">
-              Architecture & Scalability
-            </button>
-            <span className="text-zinc-700">•</span>
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> RBI-Compliant Escrow
             </span>
@@ -229,11 +222,6 @@ export default function UserPortalPage() {
           onOrderCreated={handleOrderCreated}
         />
       )}
-
-      <ArchitectureModal
-        isOpen={isArchModalOpen}
-        onClose={() => setIsArchModalOpen(false)}
-      />
     </div>
   );
 }

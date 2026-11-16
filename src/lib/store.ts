@@ -15,6 +15,7 @@ import {
 import { SAMPLE_PRODUCTS, MOCK_PARTNER_CARDHOLDERS, INITIAL_ORDERS } from './mock-data';
 import { optimizeProductDeals } from './deal-engine';
 import { DEFAULT_FRM_CONFIG, evaluateFRMRisk } from './frm/frm-engine';
+import { SupabaseService } from './supabase-service';
 
 export interface SystemMetrics {
   totalSavingsDelivered: number;
@@ -230,6 +231,28 @@ class CompareCartStore {
   private customers: CustomerOnboardingRecord[] = INITIAL_CUSTOMERS;
   private frmConfig: FRMRuleConfig = DEFAULT_FRM_CONFIG;
   private listeners: (() => void)[] = [];
+
+  constructor() {
+    if (typeof window !== 'undefined') {
+      // Sync initial orders from Supabase PostgreSQL
+      SupabaseService.fetchEscrowOrders().then(dbOrders => {
+        if (dbOrders && dbOrders.length > 0) {
+          this.orders = dbOrders;
+          this.notify();
+        }
+      });
+
+      // Subscribe to real-time order state updates via WebSockets
+      SupabaseService.subscribeToOrders(() => {
+        SupabaseService.fetchEscrowOrders().then(dbOrders => {
+          if (dbOrders && dbOrders.length > 0) {
+            this.orders = dbOrders;
+            this.notify();
+          }
+        });
+      });
+    }
+  }
 
   public getProducts(): Product[] {
     return this.products;
@@ -509,6 +532,7 @@ class CompareCartStore {
 
     this.orders.unshift(newOrder);
     this.notify();
+    SupabaseService.createEscrowOrder(newOrder);
     return newOrder;
   }
 
@@ -533,6 +557,10 @@ class CompareCartStore {
     if (currentIndex >= 0 && currentIndex < stateFlow.length - 1) {
       order.status = stateFlow[currentIndex + 1];
       this.notify();
+      SupabaseService.updateOrderStatus(order.id, order.status, {
+        merchantOrderRef: order.merchantOrderRef,
+        awbTrackingNumber: order.awbTrackingNumber,
+      });
     }
     return order;
   }

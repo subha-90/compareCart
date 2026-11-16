@@ -9,7 +9,6 @@ import {
   CreditCard,
   ShieldCheck,
   ArrowRight,
-  Sparkles,
   Layers,
   CheckCircle2,
   FileCheck2,
@@ -17,19 +16,28 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-import { ArchitectureModal } from '../src/components/ArchitectureModal';
 import { useTheme } from '../src/lib/theme';
 import { Logo } from '../src/components/Logo';
+import { AuthModal } from '../src/components/AuthModal';
+import { useAuth } from '../src/lib/useAuth';
 
 export default function EnterprisePortalGateway() {
   const router = useRouter();
   const { currentProfile, loginAs, metrics } = useCompareCart();
   const { theme, toggleTheme } = useTheme();
-  const [isArchModalOpen, setIsArchModalOpen] = useState(false);
+  const { user, profile, signOut, loading: authLoading } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [targetAuthRole, setTargetAuthRole] = useState<'user' | 'partner'>('user');
 
   const handleEnterPortal = (role: 'user' | 'partner' | 'admin', targetUrl: string) => {
     loginAs(role);
     router.push(targetUrl);
+  };
+
+  const handleAuthSuccess = (role: string) => {
+    const validRole = role === 'admin' ? 'admin' : role === 'partner' ? 'partner' : 'user';
+    loginAs(validRole);
+    router.push(`/${validRole}`);
   };
 
   return (
@@ -64,13 +72,32 @@ export default function EnterprisePortalGateway() {
               )}
             </button>
 
-            <button
-              onClick={() => setIsArchModalOpen(true)}
-              className="text-[#86868b] hover:text-white transition text-xs flex items-center gap-1 px-2.5 py-1 rounded-full hover:bg-white/[0.05]"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#2997ff]" />
-              <span className="hidden sm:inline">Architecture</span>
-            </button>
+            {/* Supabase Live Auth Status / Action Button */}
+            {user ? (
+              <div className="flex items-center gap-2 bg-[#1c1c1e]/80 border border-white/10 rounded-full px-3 py-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs text-zinc-200 font-medium truncate max-w-[120px]">
+                  {profile?.name || user.email?.split('@')[0]}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="text-[10px] text-zinc-400 hover:text-red-400 ml-1 transition"
+                  title="Sign Out"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setTargetAuthRole('user');
+                  setIsAuthModalOpen(true);
+                }}
+                className="apple-pill-btn text-xs px-3.5 py-1.5 font-medium flex items-center gap-1.5"
+              >
+                <span>Sign In</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -78,18 +105,18 @@ export default function EnterprisePortalGateway() {
       {/* Hero Section (Apple Keynote Style) */}
       <header className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-[#86868b] text-xs font-medium mb-6">
-          <span className="text-white font-semibold">CompareCart 2.4</span>
+          <span className="text-white font-semibold">CompareCart</span>
           <span>•</span>
-          <span className="text-[#2997ff]">Pro Enterprise Architecture</span>
+          <span className="text-[#2997ff]">Real-Time Price & Card Intelligence</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-semibold tracking-[-0.03em] text-white leading-[1.08]">
-          Three Dedicated Portals. <br />
-          <span className="text-[#86868b]">Zero Compromise.</span>
+          Lowest Price Guaranteed. <br />
+          <span className="text-[#86868b]">Card Discounts Unlocked.</span>
         </h1>
 
         <p className="text-base sm:text-lg text-[#86868b] max-w-xl mx-auto mt-4 leading-relaxed font-normal">
-          Designed with strict cryptographic role-based access control. Select your workspace to enter your isolated terminal.
+          Compare live prices across Flipkart, Amazon, Croma, Reliance Digital & Vijay Sales. Save up to 15% extra by unlocking partner credit card offers with 100% escrow protection.
         </p>
 
         {/* Active Session Pill */}
@@ -176,13 +203,14 @@ export default function EnterprisePortalGateway() {
             </div>
 
             <div className="mt-8 pt-4 border-t border-white/[0.06]">
-              <button
-                onClick={() => handleEnterPortal('user', '/user')}
+              <Link
+                href="/user"
+                onClick={() => loginAs('user')}
                 className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
               >
                 <span>Open Consumer Portal</span>
                 <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -243,21 +271,23 @@ export default function EnterprisePortalGateway() {
             </div>
 
             <div className="mt-8 pt-4 border-t border-white/[0.06] space-y-2">
-              <button
-                onClick={() => handleEnterPortal('partner', '/partner')}
+              <Link
+                href="/partner"
+                onClick={() => loginAs('partner')}
                 className="apple-pill-btn w-full text-xs py-3 px-4 flex items-center justify-center gap-2"
               >
                 <span>Open Partner Terminal</span>
                 <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              </Link>
 
-              <button
-                onClick={() => handleEnterPortal('partner', '/partner/onboard')}
+              <Link
+                href="/partner/onboard"
+                onClick={() => loginAs('partner')}
                 className="apple-pill-btn-secondary w-full text-[11px] py-2 px-3 flex items-center justify-center gap-1.5"
               >
                 <FileCheck2 className="w-3 h-3 text-[#2997ff]" />
                 <span>KYC Onboarding Wizard</span>
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -318,13 +348,15 @@ export default function EnterprisePortalGateway() {
             </div>
 
             <div className="mt-8 pt-4 border-t border-white/[0.06]">
-              <button
-                onClick={() => handleEnterPortal('admin', '/admin')}
+              <Link
+                href="/admin"
+                onClick={() => loginAs('admin')}
                 className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-black font-semibold rounded-full text-xs py-3 px-4 flex items-center justify-center gap-2 w-full transition shadow-[0_2px_12px_rgba(245,158,11,0.25)] active:scale-[0.98]"
               >
+                <ShieldCheck className="w-4 h-4 text-black" />
                 <span>Open Super Admin Suite</span>
                 <ChevronRight className="w-3.5 h-3.5 text-black" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -335,15 +367,9 @@ export default function EnterprisePortalGateway() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Logo size="sm" />
-            <span>•</span>
-            <span>Independent Endpoints: /user • /partner • /admin</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsArchModalOpen(true)} className="hover:text-white transition">
-              Architecture & Scalability
-            </button>
-            <span>•</span>
             <span className="text-[#30d158] font-medium flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> RBI Nodal Escrow Compliant
             </span>
@@ -351,9 +377,12 @@ export default function EnterprisePortalGateway() {
         </div>
       </footer>
 
-      <ArchitectureModal
-        isOpen={isArchModalOpen}
-        onClose={() => setIsArchModalOpen(false)}
+      {/* Supabase Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultRole={targetAuthRole}
+        onSuccess={handleAuthSuccess}
       />
     </div>
   );

@@ -7,7 +7,7 @@ import { scrapeVijaySalesLive } from './vijaysales';
 import { scrapeSerpMerchantPrice } from './serp';
 import { fetchAiGroundedPrices, getEnvKey } from './ai-grounded';
 import { SAMPLE_PRODUCTS } from '../mock-data';
-import { getCachedProduct, setCachedProduct } from '../price-cache';
+import { getCachedProductAsync, setCachedProductAsync } from '../price-cache';
 
 /**
  * Official Permanent 365-Day Co-Branded Credit Card Partnerships in India:
@@ -120,8 +120,8 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
   const startTime = Date.now();
   const isUrl = queryOrUrl.startsWith('http://') || queryOrUrl.startsWith('https://');
 
-  // 1. Check shared crowdsourced cache first (stores prices previously fetched by any user)
-  const cached = getCachedProduct(queryOrUrl);
+  // 1. Check shared crowdsourced cache first (L1 Memory -> L2 Upstash Cloud Redis)
+  const cached = await getCachedProductAsync(queryOrUrl);
   if (cached) {
     return {
       product: cached.product,
@@ -519,8 +519,8 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
       listings,
     };
 
-    // Store in shared crowdsourced cache so subsequent user searches hit cache immediately
-    setCachedProduct(queryOrUrl, liveProduct);
+    // Store in shared crowdsourced cache (Memory + Upstash Redis) so subsequent searches hit in <5ms
+    await setCachedProductAsync(queryOrUrl, liveProduct);
 
     return {
       product: liveProduct,
