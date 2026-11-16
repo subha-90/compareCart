@@ -26,6 +26,7 @@ import { SystemMetrics, useCompareCart } from '../lib/store';
 import { useTheme } from '../lib/theme';
 import { Logo } from './Logo';
 import { NotificationCenter } from './NotificationCenter';
+import { ThemeToggleCapsule } from './ThemeToggleCapsule';
 
 interface NavbarProps {
   currentPortal?: 'user' | 'partner' | 'admin';
@@ -108,7 +109,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-black/75 backdrop-blur-3xl border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+    <header className="sticky top-0 z-40 bg-white/90 dark:bg-[#101116]/90 backdrop-blur-3xl border-b border-[#E8ECF4] dark:border-white/[0.08] shadow-[0_4px_20px_rgba(16,25,54,0.04)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-colors duration-200">
       {/* Super Admin Inspection Mode Banner */}
       {isAdmin && currentPortal !== 'admin' && (
         <div className="bg-[#1c1c1e]/90 border-b border-amber-500/30 text-amber-300 text-xs py-2 px-4">
@@ -228,66 +229,50 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Real-World Notification Center Bell */}
             <NotificationCenter />
 
-            {/* Day / Night Mode Toggle (Golden Light Grey & Space Black) */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#1c1c1e]/80 hover:bg-[#2c2c2e] border border-white/10 transition text-zinc-300 hover:text-white"
-              title={theme === 'dark' ? 'Switch to Day Mode (Golden Light Grey)' : 'Switch to Night Mode (Space Black)'}
-            >
-              {theme === 'dark' ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="hidden sm:inline text-[11px] text-amber-300 font-medium">Day</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-blue-500" />
-                  <span className="hidden sm:inline text-[11px] text-zinc-700 font-medium">Night</span>
-                </>
-              )}
-            </button>
+            {/* CompareCart Light / Dark Capsule Toggle */}
+            <ThemeToggleCapsule size="sm" />
 
             {/* Authentication: Profile Pill or Sign In CTA */}
             {isAuthenticated ? (
               <div className="relative" ref={profileMenuRef}>
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center gap-2 bg-[#1c1c1e]/90 hover:bg-[#2c2c2e] p-1 pr-2.5 rounded-full border border-white/10 transition"
+                  className="flex items-center gap-2 bg-slate-100 dark:bg-[#1c1c1e]/90 hover:bg-slate-200 dark:hover:bg-[#2c2c2e] p-1 pr-2.5 rounded-full border border-slate-200 dark:border-white/10 transition"
                 >
                   <img
                     src={currentProfile.avatar}
                     alt={currentProfile.name}
                     className="w-6 h-6 rounded-full object-cover"
                   />
-                  <span className="text-[12px] font-medium text-white hidden md:inline">
+                  <span className="text-[12px] font-semibold text-[#101936] dark:text-white hidden md:inline">
                     {currentProfile.name.split(' ')[0]}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#86868b]" />
+                  <ChevronDown className="w-3 h-3 text-slate-500 dark:text-[#86868b]" />
                 </button>
 
                 {/* Apple-style Action Sheet Dropdown */}
                 {isProfileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-[#1c1c1e]/95 backdrop-blur-3xl rounded-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-fade-in space-y-1">
+                  <div className="absolute right-0 mt-2 w-64 bg-white/95 dark:bg-[#1c1c1e]/95 backdrop-blur-3xl rounded-2xl border border-slate-200 dark:border-white/15 shadow-[0_20px_50px_rgba(16,25,54,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-fade-in space-y-1 text-[#101936] dark:text-white">
                     {/* Identity */}
-                    <div className="p-2.5 border-b border-white/[0.08]">
-                      <p className="text-xs font-semibold text-white">{currentProfile.name}</p>
-                      <p className="text-[11px] text-[#86868b]">{currentProfile.email}</p>
+                    <div className="p-2.5 border-b border-slate-200 dark:border-white/[0.08]">
+                      <p className="text-xs font-semibold text-[#101936] dark:text-white">{currentProfile.name}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-[#86868b]">{currentProfile.email}</p>
                       <div className="mt-1.5 flex items-center justify-between">
-                        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white font-medium uppercase">
+                        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-[#101936] dark:text-white font-medium uppercase">
                           {currentProfile.role}
                         </span>
-                        <span className="text-[10px] text-[#86868b]">{currentProfile.city}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-[#86868b]">{currentProfile.city}</span>
                       </div>
                     </div>
 
                     {/* Switch / Log In with Credentials */}
-                    <div className="py-1 border-b border-white/[0.08]">
+                    <div className="py-1 border-b border-slate-200 dark:border-white/[0.08]">
                       <button
                         onClick={() => {
                           setIsProfileMenuOpen(false);
                           openAuthModal(currentPortal);
                         }}
-                        className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-[#d4a017] hover:bg-[#d4a017]/10 transition font-medium"
+                        className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-[#2864FF] hover:bg-[#2864FF]/10 transition font-medium"
                       >
                         <KeyRound className="w-3.5 h-3.5" />
                         <span>Switch Portal / Credentials</span>
@@ -296,52 +281,52 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     {/* Admin Perspective Switching */}
                     {isAdmin ? (
-                      <div className="pt-1 border-b border-white/[0.08] pb-1">
-                        <span className="text-[10px] text-[#86868b] uppercase font-semibold tracking-wider px-2 block mb-1">
+                      <div className="pt-1 border-b border-slate-200 dark:border-white/[0.08] pb-1">
+                        <span className="text-[10px] text-slate-400 dark:text-[#86868b] uppercase font-semibold tracking-wider px-2 block mb-1">
                           Perspective Switching
                         </span>
 
                         <button
                           onClick={() => handleAdminPortalSwitch('user')}
                           className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
-                            currentPortal === 'user' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
+                            currentPortal === 'user' ? 'bg-[#2864FF]/10 text-[#2864FF] font-semibold dark:bg-white/10 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-white/[0.05] text-slate-600 dark:text-[#86868b]'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <ShoppingBag className="w-3.5 h-3.5 text-[#30d158]" />
+                            <ShoppingBag className="w-3.5 h-3.5 text-emerald-500" />
                             <span>Consumer Portal</span>
                           </div>
-                          {currentPortal === 'user' && <Check className="w-3.5 h-3.5 text-white" />}
+                          {currentPortal === 'user' && <Check className="w-3.5 h-3.5 text-[#2864FF] dark:text-white" />}
                         </button>
 
                         <button
                           onClick={() => handleAdminPortalSwitch('partner')}
                           className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
-                            currentPortal === 'partner' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
+                            currentPortal === 'partner' ? 'bg-[#2864FF]/10 text-[#2864FF] font-semibold dark:bg-white/10 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-white/[0.05] text-slate-600 dark:text-[#86868b]'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <CreditCard className="w-3.5 h-3.5 text-[#2997ff]" />
+                            <CreditCard className="w-3.5 h-3.5 text-[#2864FF]" />
                             <span>Card Partner Portal</span>
                           </div>
-                          {currentPortal === 'partner' && <Check className="w-3.5 h-3.5 text-white" />}
+                          {currentPortal === 'partner' && <Check className="w-3.5 h-3.5 text-[#2864FF] dark:text-white" />}
                         </button>
 
                         <button
                           onClick={() => handleAdminPortalSwitch('admin')}
                           className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition ${
-                            currentPortal === 'admin' ? 'bg-white/10 text-white font-semibold' : 'hover:bg-white/[0.05] text-[#86868b] hover:text-white'
+                            currentPortal === 'admin' ? 'bg-[#2864FF]/10 text-[#2864FF] font-semibold dark:bg-white/10 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-white/[0.05] text-slate-600 dark:text-[#86868b]'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                            <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
                             <span>Super Admin Suite</span>
                           </div>
-                          {currentPortal === 'admin' && <Check className="w-3.5 h-3.5 text-white" />}
+                          {currentPortal === 'admin' && <Check className="w-3.5 h-3.5 text-[#2864FF] dark:text-white" />}
                         </button>
                       </div>
                     ) : (
-                      <div className="py-1.5 border-b border-white/[0.08] px-2 text-[11px] text-[#86868b]">
+                      <div className="py-1.5 border-b border-slate-200 dark:border-white/[0.08] px-2 text-[11px] text-slate-500 dark:text-[#86868b]">
                         {currentProfile.role === 'user' ? (
                           <p>Universal Price Comparison & Cart Escrow</p>
                         ) : (
@@ -354,9 +339,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="pt-1">
                       <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-red-400 hover:bg-red-500/10 transition font-medium"
+                        className="w-full flex items-center gap-2 p-2 rounded-xl text-xs text-red-500 hover:bg-red-500/10 transition font-medium"
                       >
-                        <LogOut className="w-3.5 h-3.5 text-red-400" />
+                        <LogOut className="w-3.5 h-3.5 text-red-500" />
                         <span>Sign Out</span>
                       </button>
                     </div>
@@ -366,10 +351,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <button
                 onClick={() => openAuthModal(currentPortal)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-[#d4a017] to-[#b38312] text-black hover:from-[#e5b329] hover:to-[#c69415] transition shadow-md shadow-[#d4a017]/25"
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold cc-gradient-btn text-white transition shadow-glow-blue"
               >
-                <Lock className="w-3.5 h-3.5 text-black" />
-                <span>Sign In / Register</span>
+                <Lock className="w-3.5 h-3.5" />
+                <span>Sign In</span>
               </button>
             )}
           </div>
