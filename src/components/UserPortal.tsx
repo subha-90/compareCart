@@ -430,67 +430,83 @@ export const UserPortal: React.FC<UserPortalProps> = ({
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {filteredProducts.map((p) => {
-                  const deals = optimizeProductDeals(p);
-                  const lowest = deals[0];
-                  const savings = getDealSavings(lowest);
-                  const discountPct = lowest ? Math.round((savings / lowest.listedPrice) * 100) : 12;
+              {filteredProducts.length === 0 ? (
+                <div className="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 text-center space-y-3">
+                  <Search className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
+                  <h4 className="text-base font-bold">No Products Found for &quot;{searchQuery}&quot;</h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Try searching for iPhone, MacBook, AirPods, or paste a live product link from Flipkart, Amazon, Croma, Reliance, or Vijay Sales.
+                  </p>
+                  <button
+                    onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+                    className="px-4 py-2 rounded-full cc-gradient-btn text-white text-xs font-semibold shadow-glow-blue mt-2"
+                  >
+                    Reset Search &amp; Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {filteredProducts.map((p) => {
+                    const deals = optimizeProductDeals(p);
+                    const lowest = deals[0];
+                    const savings = getDealSavings(lowest);
+                    const discountPct = lowest && lowest.listedPrice > 0 ? Math.max(0, Math.round((savings / lowest.listedPrice) * 100)) : 0;
 
-                  return (
-                    <div
-                      key={p.id}
-                      onClick={() => {
-                        setSelectedProductId(p.id);
-                        handleTabChange('compare');
-                      }}
-                      className="group cursor-pointer rounded-3xl bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 p-5 shadow-soft hover:shadow-glow-blue hover:border-[#2864FF]/40 transition-all duration-200 flex flex-col justify-between"
-                    >
-                      <div>
-                        {/* Image Showcase */}
-                        <div className="relative w-full h-44 rounded-2xl bg-slate-50 dark:bg-black/30 flex items-center justify-center p-4 overflow-hidden mb-4">
-                          <img
-                            src={p.image}
-                            alt={p.title}
-                            className="max-h-36 object-contain group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleLovedProduct(p.id);
-                            }}
-                            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition ${
-                              lovedProductIds.includes(p.id)
-                                ? 'bg-red-500 text-white'
-                                : 'bg-white/80 dark:bg-black/40 text-slate-500 hover:text-red-500'
-                            }`}
-                          >
-                            <Heart className={`w-4 h-4 ${lovedProductIds.includes(p.id) ? 'fill-white' : ''}`} />
-                          </button>
-                        </div>
-
-                        {/* Title & Brand */}
-                        <p className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">{p.brand}</p>
-                        <h4 className="text-base font-bold text-[#101936] dark:text-white line-clamp-1 mt-0.5">{p.title}</h4>
-                      </div>
-
-                      {/* Pricing & Discount Badge */}
-                      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                    return (
+                      <div
+                        key={p.id}
+                        onClick={() => {
+                          setSelectedProductId(p.id);
+                          handleTabChange('compare');
+                        }}
+                        className="group cursor-pointer rounded-3xl bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 p-5 shadow-soft hover:shadow-glow-blue hover:border-[#2864FF]/40 transition-all duration-200 flex flex-col justify-between"
+                      >
                         <div>
-                          <span className="text-[11px] text-slate-500 dark:text-slate-400">From</span>
-                          <p className="text-lg font-black text-[#101936] dark:text-white">
-                            ₹{lowest ? getDealPrice(lowest).toLocaleString('en-IN') : p.listings[0]?.listedPrice.toLocaleString('en-IN')}
-                          </p>
+                          {/* Image Showcase */}
+                          <div className="relative w-full h-44 rounded-2xl bg-slate-50 dark:bg-black/30 flex items-center justify-center p-4 overflow-hidden mb-4">
+                            <img
+                              src={p.image}
+                              alt={p.title}
+                              className="max-h-36 object-contain group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleLovedProduct(p.id);
+                              }}
+                              className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition ${
+                                lovedProductIds.includes(p.id)
+                                  ? 'bg-red-500 text-white'
+                                  : 'bg-white/80 dark:bg-black/40 text-slate-500 hover:text-red-500'
+                              }`}
+                            >
+                              <Heart className={`w-4 h-4 ${lovedProductIds.includes(p.id) ? 'fill-white' : ''}`} />
+                            </button>
+                          </div>
+
+                          {/* Title & Brand */}
+                          <p className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">{p.brand}</p>
+                          <h4 className="text-base font-bold text-[#101936] dark:text-white line-clamp-1 mt-0.5">{p.title}</h4>
                         </div>
 
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
-                          <span>↓ {discountPct}%</span>
+                        {/* Pricing & Discount Badge */}
+                        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                          <div>
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400">From</span>
+                            <p className="text-lg font-black text-[#101936] dark:text-white">
+                              ₹{lowest ? getDealPrice(lowest).toLocaleString('en-IN') : p.listings[0]?.listedPrice.toLocaleString('en-IN')}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
+                            <span>↓ {discountPct}%</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -606,7 +622,7 @@ export const UserPortal: React.FC<UserPortalProps> = ({
                     </div>
 
                     <div className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
-                      {Math.round((getDealSavings(bestDeal) / bestDeal.listedPrice) * 100)}% off
+                      {bestDeal.listedPrice > 0 ? Math.max(0, Math.round((getDealSavings(bestDeal) / bestDeal.listedPrice) * 100)) : 0}% off
                     </div>
                   </div>
                 )}
