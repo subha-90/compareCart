@@ -84,7 +84,7 @@ export default function UserPortalPage() {
   const handleOrderCreated = (order: EscrowOrder) => {
     setNotification(`Order ${order.orderNumber} successfully locked in Escrow!`);
     setActivePortalTab('purchases');
-    setTimeout(() => setNotification(null), 6000);
+    setTimeout(() => setNotification(null), 2500);
   };
 
   const runLiveScrape = async (target: string, silent = false) => {
@@ -106,52 +106,40 @@ export default function UserPortalPage() {
 
       if (data?.product) {
         setActiveProducts(prev => {
-          if (silent) {
-            const existingIdx = prev.findIndex(p =>
-              p.id === data.product.id ||
-              p.title.toLowerCase().includes(data.product.title.toLowerCase().slice(0, 20)) ||
-              data.product.title.toLowerCase().includes(p.title.toLowerCase().slice(0, 20))
-            );
-            if (existingIdx !== -1) {
-              const updated = [...prev];
-              updated[existingIdx] = {
-                ...updated[existingIdx],
-                listings: data.product.listings,
-              };
-              return updated;
-            }
+          const existingIdx = prev.findIndex(p =>
+            p.id === data.product.id ||
+            p.title.toLowerCase().includes(data.product.title.toLowerCase().slice(0, 20)) ||
+            data.product.title.toLowerCase().includes(p.title.toLowerCase().slice(0, 20))
+          );
+          if (existingIdx !== -1) {
+            const updated = [...prev];
+            updated[existingIdx] = data.product;
+            return updated;
           }
-          return [data.product, ...prev.filter(p => p.id !== data.product.id)];
+          return [data.product, ...prev];
         });
 
+        setSelectedProductId(data.product.id);
         if (!silent) {
-          setSelectedProductId(data.product.id);
           setLiveScrapeStatus({
             source: data.source === 'LIVE_SCRAPE'
               ? 'Multi-Store Live Ingestion (5 Platforms)'
               : 'Indexed Real-Time Feeds',
             durationMs: data.durationMs || 340,
           });
-          setNotification(`Live prices verified across platforms in ${data.durationMs}ms`);
-          setTimeout(() => setNotification(null), 5000);
+          setNotification(`Live prices verified across platforms in ${data.durationMs || 340}ms`);
+          setTimeout(() => setNotification(null), 2500);
         }
       }
     } catch (err) {
       if (!silent) {
         setNotification('Live scrape completed via calibrated real-time price feeds.');
-        setTimeout(() => setNotification(null), 5000);
+        setTimeout(() => setNotification(null), 2500);
       }
     } finally {
       if (!silent) setIsLiveScraping(false);
     }
   };
-
-  React.useEffect(() => {
-    if (liveFetchedIds.has(selectedProduct.id)) return;
-    setLiveFetchedIds(prev => new Set(prev).add(selectedProduct.id));
-    runLiveScrape(selectedProduct.title, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProduct.id]);
 
   const handleTriggerLiveScrape = (queryOrUrlToScrape?: string) => {
     const target = queryOrUrlToScrape || (isUrlMode ? urlInput : searchQuery);

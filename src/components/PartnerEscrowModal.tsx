@@ -81,7 +81,7 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
     if (step === 'confirmed') {
       const timer = setTimeout(() => {
         handleClose();
-      }, 2200);
+      }, 1400);
       return () => clearTimeout(timer);
     }
   }, [step]);
