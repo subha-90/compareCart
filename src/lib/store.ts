@@ -375,7 +375,7 @@ class CompareCartStore {
   private currentRole: 'user' | 'partner' | 'admin' = 'user';
   private currentProfile: UserProfile = MOCK_PROFILES.user;
   private cartItems: CartItem[] = [];
-  private lovedProductIds: Set<string> = new Set(['1', '4']); // default loved: iPhone 16 & Sony XM5
+  private lovedProductIds: Set<string> = new Set<string>(); // dynamically initialized from user interaction / localStorage
   private partnerRequests: PartnerOnboardingRequest[] = INITIAL_PARTNER_REQUESTS;
   private customers: CustomerOnboardingRecord[] = INITIAL_CUSTOMERS;
   private frmConfig: FRMRuleConfig = DEFAULT_FRM_CONFIG;
@@ -455,6 +455,19 @@ class CompareCartStore {
       }
     } catch (e) {
       console.warn('[CompareCartStore] Error loading stored users:', e);
+    }
+
+    // Load loved / saved products from localStorage
+    try {
+      const storedLoved = localStorage.getItem('comparecart_loved_products');
+      if (storedLoved) {
+        const parsed = JSON.parse(storedLoved);
+        if (Array.isArray(parsed)) {
+          this.lovedProductIds = new Set(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn('[CompareCartStore] Error loading loved products:', e);
     }
 
     this.notify();
@@ -1018,6 +1031,16 @@ class CompareCartStore {
       this.lovedProductIds.delete(productId);
     } else {
       this.lovedProductIds.add(productId);
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(
+          'comparecart_loved_products',
+          JSON.stringify(Array.from(this.lovedProductIds))
+        );
+      } catch (e) {
+        console.warn('[CompareCartStore] Error saving loved products to localStorage:', e);
+      }
     }
     this.notify();
   }

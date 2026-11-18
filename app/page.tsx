@@ -216,8 +216,8 @@ export default function EnterprisePortalGateway() {
                 href="/user"
                 className="w-full py-3 rounded-full cc-gradient-btn text-white text-xs font-semibold shadow-glow-blue flex items-center justify-center gap-2 transition"
               >
-                <span>Enter Consumer Portal</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <span className="text-white font-semibold">Enter Consumer Portal</span>
+                <ChevronRight className="w-3.5 h-3.5 text-white" />
               </Link>
               <button
                 type="button"
@@ -296,10 +296,10 @@ export default function EnterprisePortalGateway() {
             <div className="mt-8 pt-4 border-t border-slate-100 dark:border-white/5 space-y-2">
               <Link
                 href="/partner"
-                className="w-full py-3 rounded-full bg-[#101936] hover:bg-[#1B1D27] dark:bg-white dark:hover:bg-slate-200 text-white dark:text-[#101936] text-xs font-semibold shadow-sm flex items-center justify-center gap-2 transition"
+                className="w-full py-3 rounded-full bg-gradient-to-r from-[#7047F5] to-[#5932df] hover:from-[#7c55f7] hover:to-[#683fe3] text-white text-xs font-semibold shadow-glow-purple flex items-center justify-center gap-2 transition"
               >
-                <span>Enter Partner Terminal</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <span className="text-white font-semibold">Enter Partner Terminal</span>
+                <ChevronRight className="w-3.5 h-3.5 text-white" />
               </Link>
               <button
                 type="button"

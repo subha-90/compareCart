@@ -433,8 +433,29 @@ html.light .bg-zinc-850 {
   background-color: #f0eee9 !important;
 }
 
-html.light .text-white {
+/* Smooth Light Mode Overrides for UI Elements - Protect Buttons, Links & Badges */
+html.light .text-white:not(button):not(a):not([class*="btn"]):not([class*="badge"]):not([class*="bg-"]):not([class*="gradient"]):not(.keep-white) {
   color: #1d1d1f !important;
+}
+
+/* Ensure all buttons, pills, and dark surfaces maintain crisp white text in Light Mode */
+html.light button.text-white,
+html.light a.text-white,
+html.light .text-white-force,
+html.light .keep-white,
+html.light .cc-gradient-btn,
+html.light .cc-gradient-btn *,
+html.light .apple-pill-btn,
+html.light .apple-pill-btn *,
+html.light [class*="bg-[#101936]"],
+html.light [class*="bg-[#101936]"] *,
+html.light [class*="bg-[#7047F5]"],
+html.light [class*="bg-[#7047F5]"] *,
+html.light [class*="from-[#7047F5]"],
+html.light [class*="from-[#7047F5]"] *,
+html.light [class*="from-[#2864FF]"],
+html.light [class*="from-[#2864FF]"] * {
+  color: #ffffff !important;
 }
 html.light .text-zinc-100,
 html.light .text-zinc-200,
