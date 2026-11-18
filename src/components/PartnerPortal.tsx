@@ -287,7 +287,7 @@ export const PartnerPortal: React.FC = () => {
                 className="realistic-card-container group select-none"
               >
                 <div
-                  className="realistic-card p-5 sm:p-6 text-white flex flex-col justify-between border border-white/20 relative"
+                  className="realistic-card keep-white p-5 sm:p-6 text-white flex flex-col justify-between border border-white/20 relative"
                   style={{
                     background: card.bank.toLowerCase().includes('hdfc')
                       ? 'linear-gradient(135deg, #0b0f19 0%, #151c2e 50%, #000000 100%)'

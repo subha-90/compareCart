@@ -454,8 +454,27 @@ html.light [class*="bg-[#7047F5]"] *,
 html.light [class*="from-[#7047F5]"],
 html.light [class*="from-[#7047F5]"] *,
 html.light [class*="from-[#2864FF]"],
-html.light [class*="from-[#2864FF]"] * {
+html.light [class*="from-[#2864FF]"] *,
+html.light .realistic-card,
+html.light .realistic-card h4,
+html.light .realistic-card p,
+html.light .realistic-card span,
+html.light .realistic-card strong {
   color: #ffffff !important;
+}
+
+html.light .realistic-card .text-amber-300 {
+  color: #fcd34d !important;
+}
+
+html.light .realistic-card .text-zinc-400,
+html.light .realistic-card .text-zinc-500 {
+  color: #a1a1aa !important;
+}
+
+html.light .realistic-card .text-\[\#30d158\],
+html.light .realistic-card [class*="text-[#30d158]"] {
+  color: #30d158 !important;
 }
 html.light .text-zinc-100,
 html.light .text-zinc-200,
