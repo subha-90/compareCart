@@ -469,54 +469,54 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
           </div>
 
           <form onSubmit={handleSaveFRMConfig} className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            <div className="space-y-2 bg-zinc-950/80 p-5 rounded-2xl border border-white/5">
-              <label className="block text-zinc-200 font-bold">Max Daily GMV Limit Per Card (₹)</label>
-              <p className="text-[11px] text-zinc-400">Restricts total transaction volume a single credit card can swipe across all buyers in a 24-hour cycle.</p>
+            <div className="space-y-2 bg-slate-100 dark:bg-zinc-950/80 p-5 rounded-2xl border border-slate-200 dark:border-white/5">
+              <label className="block text-slate-800 dark:text-zinc-200 font-bold">Max Daily GMV Limit Per Card (₹)</label>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400">Restricts total transaction volume a single credit card can swipe across all buyers in a 24-hour cycle.</p>
               <input
                 type="number"
                 step="10000"
                 value={dailyGmvLimit}
                 onChange={(e) => setDailyGmvLimit(Number(e.target.value))}
-                className="w-full bg-zinc-900 text-white p-3 rounded-xl border border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
+                className="w-full bg-white dark:bg-zinc-900 text-slate-900 dark:text-white p-3 rounded-xl border border-slate-300 dark:border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
               />
             </div>
 
-            <div className="space-y-2 bg-zinc-950/80 p-5 rounded-2xl border border-white/5">
-              <label className="block text-zinc-200 font-bold">Max Hourly Swipe Velocity</label>
-              <p className="text-[11px] text-zinc-400">Maximum permitted checkouts per 60 minutes per card to prevent bank automated bot fraud flags.</p>
+            <div className="space-y-2 bg-slate-100 dark:bg-zinc-950/80 p-5 rounded-2xl border border-slate-200 dark:border-white/5">
+              <label className="block text-slate-800 dark:text-zinc-200 font-bold">Max Hourly Swipe Velocity</label>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400">Maximum permitted checkouts per 60 minutes per card to prevent bank automated bot fraud flags.</p>
               <input
                 type="number"
                 min={1}
                 max={10}
                 value={hourlySwipes}
                 onChange={(e) => setHourlySwipes(Number(e.target.value))}
-                className="w-full bg-zinc-900 text-white p-3 rounded-xl border border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
+                className="w-full bg-white dark:bg-zinc-900 text-slate-900 dark:text-white p-3 rounded-xl border border-slate-300 dark:border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
               />
             </div>
 
-            <div className="space-y-2 bg-zinc-950/80 p-5 rounded-2xl border border-white/5">
-              <label className="block text-zinc-200 font-bold">Minimum CIBIL Score Threshold</label>
-              <p className="text-[11px] text-zinc-400">Applicants scoring below this score are automatically flagged for mandatory Step-Up manual verification.</p>
+            <div className="space-y-2 bg-slate-100 dark:bg-zinc-950/80 p-5 rounded-2xl border border-slate-200 dark:border-white/5">
+              <label className="block text-slate-800 dark:text-zinc-200 font-bold">Minimum CIBIL Score Threshold</label>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400">Applicants scoring below this score are automatically flagged for mandatory Step-Up manual verification.</p>
               <input
                 type="number"
                 min={600}
                 max={850}
                 value={minCibil}
                 onChange={(e) => setMinCibil(Number(e.target.value))}
-                className="w-full bg-zinc-900 text-white p-3 rounded-xl border border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
+                className="w-full bg-white dark:bg-zinc-900 text-slate-900 dark:text-white p-3 rounded-xl border border-slate-300 dark:border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
               />
             </div>
 
-            <div className="space-y-2 bg-zinc-950/80 p-5 rounded-2xl border border-white/5">
-              <label className="block text-zinc-200 font-bold">Rolling Reserve Ratio (%)</label>
-              <p className="text-[11px] text-zinc-400">Percentage of order value held in Escrow until the 7-day e-commerce return window has lapsed.</p>
+            <div className="space-y-2 bg-slate-100 dark:bg-zinc-950/80 p-5 rounded-2xl border border-slate-200 dark:border-white/5">
+              <label className="block text-slate-800 dark:text-zinc-200 font-bold">Rolling Reserve Ratio (%)</label>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400">Percentage of order value held in Escrow until the 7-day e-commerce return window has lapsed.</p>
               <input
                 type="number"
                 min={2}
                 max={20}
                 value={reserveRatio}
                 onChange={(e) => setReserveRatio(Number(e.target.value))}
-                className="w-full bg-zinc-900 text-white p-3 rounded-xl border border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
+                className="w-full bg-white dark:bg-zinc-900 text-slate-900 dark:text-white p-3 rounded-xl border border-slate-300 dark:border-white/10 font-mono text-sm focus:outline-none focus:border-amber-400 mt-2"
               />
             </div>
 
@@ -742,7 +742,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
             </div>
             <button
               onClick={handleFlushCache}
-              className="text-xs font-bold text-white bg-zinc-800 hover:bg-zinc-700 px-3.5 py-2 rounded-xl border border-white/10 transition flex items-center gap-2"
+              className="text-xs font-bold text-white bg-[#101936] hover:bg-[#1a2a52] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-2 rounded-xl border border-[#101936]/20 dark:border-white/10 transition flex items-center gap-2"
             >
               <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
               <span>Purge Cache</span>
