@@ -177,8 +177,26 @@ export const PartnerEscrowModal: React.FC<PartnerEscrowModalProps> = ({
             partnerCommission: deal.cardholderCommission,
           },
           theme: {
-            color: '#0071e3',
+            color: '#2864FF',
             backdrop_color: 'rgba(0, 0, 0, 0.85)',
+          },
+          config: {
+            display: {
+              blocks: {
+                upi: {
+                  name: 'Pay with UPI (GPay, PhonePe, Paytm, QR)',
+                  instruments: [{ method: 'upi' }],
+                },
+                banks: {
+                  name: 'Cards & Netbanking',
+                  instruments: [{ method: 'card' }, { method: 'netbanking' }],
+                },
+              },
+              sequence: ['block.upi', 'block.banks'],
+              preferences: {
+                show_default_blocks: true,
+              },
+            },
           },
           modal: {
             ondismiss: function () {
