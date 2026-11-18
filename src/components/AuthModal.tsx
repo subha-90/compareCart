@@ -391,7 +391,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClick={handleClose}
     >
       <div
-        className="relative w-full max-w-lg bg-white dark:bg-[#141416]/98 border border-slate-200 dark:border-white/15 rounded-3xl shadow-2xl overflow-hidden text-[#101936] dark:text-white my-8 cursor-default transition-colors duration-200"
+        className="relative w-full max-w-lg auth-modal-card bg-white dark:bg-[#15161c] border border-slate-200 dark:border-white/15 rounded-3xl shadow-2xl overflow-hidden text-[#101936] dark:text-white my-8 cursor-default transition-colors duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -463,13 +463,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   onClick={() => handleAutofill('user')}
                   className={`p-2.5 rounded-2xl border text-left transition ${
                     selectedPortal === 'user'
-                      ? 'bg-amber-100 border-amber-500 text-amber-950 dark:bg-amber-500/20 dark:border-amber-400 dark:text-white shadow-sm'
-                      : 'bg-slate-50 hover:bg-slate-100 border-slate-300 dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/15 text-slate-700 dark:text-zinc-300'
+                      ? 'bg-amber-100 border-amber-500 text-amber-950 dark:bg-amber-500/25 dark:border-amber-400 dark:text-white shadow-sm'
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-300 dark:bg-zinc-900/90 dark:hover:bg-zinc-800 dark:border-white/15 text-slate-700 dark:text-zinc-200'
                   }`}
                 >
                   <ShoppingBag className={`w-4 h-4 mb-1 ${selectedPortal === 'user' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-zinc-400'}`} />
-                  <p className="text-xs font-bold leading-tight">Shopper</p>
-                  <p className="text-[10px] text-slate-600 dark:text-zinc-400 mt-0.5">Price &amp; Deals</p>
+                  <p className="text-xs font-bold leading-tight text-slate-900 dark:text-white">Shopper</p>
+                  <p className="text-[10px] text-slate-600 dark:text-zinc-300 mt-0.5">Price &amp; Deals</p>
                 </button>
 
                 <button
@@ -477,13 +477,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   onClick={() => handleAutofill('partner')}
                   className={`p-2.5 rounded-2xl border text-left transition ${
                     selectedPortal === 'partner'
-                      ? 'bg-purple-100 border-purple-500 text-purple-950 dark:bg-purple-500/20 dark:border-purple-400 dark:text-white shadow-sm'
-                      : 'bg-slate-50 hover:bg-slate-100 border-slate-300 dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/15 text-slate-700 dark:text-zinc-300'
+                      ? 'bg-purple-100 border-purple-500 text-purple-950 dark:bg-purple-500/25 dark:border-purple-400 dark:text-white shadow-sm'
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-300 dark:bg-zinc-900/90 dark:hover:bg-zinc-800 dark:border-white/15 text-slate-700 dark:text-zinc-200'
                   }`}
                 >
                   <CreditCard className={`w-4 h-4 mb-1 ${selectedPortal === 'partner' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-500 dark:text-zinc-400'}`} />
-                  <p className="text-xs font-bold leading-tight">Card Partner</p>
-                  <p className="text-[10px] text-slate-600 dark:text-zinc-400 mt-0.5">Monetize Swipes</p>
+                  <p className="text-xs font-bold leading-tight text-slate-900 dark:text-white">Card Partner</p>
+                  <p className="text-[10px] text-slate-600 dark:text-zinc-300 mt-0.5">Monetize Swipes</p>
                 </button>
 
                 <button
@@ -491,25 +491,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   onClick={() => handleAutofill('admin')}
                   className={`p-2.5 rounded-2xl border text-left transition ${
                     selectedPortal === 'admin'
-                      ? 'bg-emerald-100 border-emerald-500 text-emerald-950 dark:bg-emerald-500/20 dark:border-emerald-400 dark:text-white shadow-sm'
-                      : 'bg-slate-50 hover:bg-slate-100 border-slate-300 dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-white/15 text-slate-700 dark:text-zinc-300'
+                      ? 'bg-emerald-100 border-emerald-500 text-emerald-950 dark:bg-emerald-500/25 dark:border-emerald-400 dark:text-white shadow-sm'
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-300 dark:bg-zinc-900/90 dark:hover:bg-zinc-800 dark:border-white/15 text-slate-700 dark:text-zinc-200'
                   }`}
                 >
                   <ShieldCheck className={`w-4 h-4 mb-1 ${selectedPortal === 'admin' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-zinc-400'}`} />
-                  <p className="text-xs font-bold leading-tight">Admin Vault</p>
-                  <p className="text-[10px] text-slate-600 dark:text-zinc-400 mt-0.5">Treasury &amp; Risk</p>
+                  <p className="text-xs font-bold leading-tight text-slate-900 dark:text-white">Admin Vault</p>
+                  <p className="text-[10px] text-slate-600 dark:text-zinc-300 mt-0.5">Treasury &amp; Risk</p>
                 </button>
               </div>
             </div>
 
             {/* 1-Click Demo Credential Banner */}
-            <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-zinc-900 border border-amber-300/80 dark:border-amber-500/30 flex items-center justify-between gap-3 shadow-sm">
+            <div className="auth-modal-banner p-3.5 rounded-2xl bg-amber-50 dark:bg-[#1a1c24] border border-amber-300/80 dark:border-amber-500/40 flex items-center justify-between gap-3 shadow-sm">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
                   <KeyRound className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                   <span>Demo Credentials for {currentCred.portalName}</span>
                 </div>
-                <p className="text-[11px] font-mono font-medium text-slate-700 dark:text-amber-300/90 mt-0.5 truncate">
+                <p className="text-[11px] font-mono font-bold text-slate-800 dark:text-amber-300 mt-0.5 truncate">
                   {currentCred.email} • {currentCred.password}
                 </p>
               </div>
@@ -532,7 +532,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* Universal Sign In Form */}
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-slate-800 dark:text-zinc-200 block mb-1.5">
+                <label className="text-xs font-bold text-slate-800 dark:text-white block mb-1.5">
                   Username / User ID, Mobile Number, or Email
                 </label>
                 <div className="relative">
@@ -543,14 +543,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="e.g. Username (shopper_rahul), Mobile (+91 98201 44521), or Email"
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 text-slate-900 placeholder-slate-400 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white dark:bg-zinc-900 dark:border-white/20 dark:text-white dark:placeholder-zinc-500 dark:focus:border-amber-400 transition"
+                    className="auth-modal-input w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 text-slate-900 placeholder-slate-400 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white dark:bg-[#1f212a] dark:border-white/20 dark:text-white dark:placeholder-zinc-400 dark:focus:border-amber-400 transition font-medium"
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-slate-800 dark:text-zinc-200">Password</label>
+                  <label className="text-xs font-bold text-slate-800 dark:text-white">Password</label>
                   <button
                     type="button"
                     onClick={() => {
@@ -572,7 +572,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
-                    className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 text-slate-900 placeholder-slate-400 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white dark:bg-zinc-900 dark:border-white/20 dark:text-white dark:placeholder-zinc-500 dark:focus:border-amber-400 transition"
+                    className="auth-modal-input w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 text-slate-900 placeholder-slate-400 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white dark:bg-[#1f212a] dark:border-white/20 dark:text-white dark:placeholder-zinc-400 dark:focus:border-amber-400 transition font-medium"
                   />
                   <button
                     type="button"

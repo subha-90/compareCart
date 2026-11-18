@@ -527,6 +527,45 @@ html.light header {
   border-bottom: 1px solid rgba(212, 160, 23, 0.2) !important;
 }
 
+/* Auth Modal Explicit Dark / Light Rules */
+.auth-modal-card {
+  background-color: #ffffff;
+  color: #101936;
+}
+html.dark .auth-modal-card {
+  background-color: #15161c !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+html.dark .auth-modal-card label,
+html.dark .auth-modal-card h2,
+html.dark .auth-modal-card h3,
+html.dark .auth-modal-card h4 {
+  color: #ffffff !important;
+}
+html.dark .auth-modal-input {
+  background-color: #1f212a !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html.dark .auth-modal-input::placeholder {
+  color: #94a3b8 !important;
+}
+html.dark .auth-modal-banner {
+  background-color: #1a1c24 !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+html.dark .auth-modal-card-pill-active {
+  background-color: rgba(168, 85, 247, 0.25) !important;
+  border-color: #c084fc !important;
+  color: #ffffff !important;
+}
+html.dark .auth-modal-card-pill-inactive {
+  background-color: #1a1c24 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #e4e4e7 !important;
+}
+
 /* Micro Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
