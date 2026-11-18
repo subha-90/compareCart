@@ -306,17 +306,15 @@ export default function EnterprisePortalGateway() {
 
               {/* Persona Tag */}
               <div className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
-                  alt="Dr. Arvind"
-                  className="w-8 h-8 rounded-full object-cover"
-                />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-sm">
+                  SS
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold truncate">Dr. Arvind Swaminathan</p>
-                    <span className="text-[9px] font-mono text-slate-400 uppercase">Demo Profile</span>
+                    <p className="text-xs font-semibold truncate text-[#101936] dark:text-white">Subhashree Mohan Swain</p>
+                    <span className="text-[9px] font-mono text-amber-500 uppercase font-semibold">Super Admin</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 truncate">arvind.admin@comparecart.in • Pass: admin123</p>
+                  <p className="text-[10px] text-slate-500 truncate">subhashree.admin@comparecart.in • Pass: Subhashree@Admin2026!</p>
                 </div>
               </div>
 

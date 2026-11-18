@@ -133,7 +133,10 @@ export const DealComparisonTable: React.FC<DealComparisonTableProps> = ({
                         </span>
                         {deal.appliedCoupon ? (
                           <>
-                            <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 inline-block mt-0.5">
+                            <span
+                              title={deal.appliedCoupon.source ? `${deal.appliedCoupon.source} (${deal.appliedCoupon.successRate || 95}% success)` : 'Verified Coupon'}
+                              className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 inline-block mt-0.5 cursor-help"
+                            >
                               {deal.appliedCoupon.code}
                             </span>
                             <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">

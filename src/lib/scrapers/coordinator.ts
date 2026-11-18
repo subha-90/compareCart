@@ -8,6 +8,21 @@ import { scrapeSerpMerchantPrice } from './serp';
 import { fetchAiGroundedPrices, getEnvKey } from './ai-grounded';
 import { SAMPLE_PRODUCTS } from '../mock-data';
 import { getCachedProductAsync, setCachedProductAsync } from '../price-cache';
+import { GRABON_VERIFIED_COUPONS, detectProductCategory } from '../coupons/grabon-feed';
+
+/**
+ * Resolves available coupons for a merchant listing.
+ * Prefers live scraped coupons if available; otherwise falls back to verified GrabOn coupons.
+ */
+function getStoreCoupons(merchantId: MerchantId, title: string, price: number, scrapedCoupons: any[] = []): any[] {
+  if (scrapedCoupons && scrapedCoupons.length > 0) return scrapedCoupons;
+  const category = detectProductCategory(title);
+  return GRABON_VERIFIED_COUPONS.filter(c =>
+    c.merchantId === merchantId &&
+    (c.category === 'all' || c.category === category) &&
+    (!c.minOrderValue || price >= c.minOrderValue)
+  );
+}
 
 /**
  * Official Permanent 365-Day Co-Branded Credit Card Partnerships in India:
@@ -365,7 +380,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
 
     // 1. Flipkart Listing (Real-time live scrape only)
     if (flipkartPrice > 0) {
-      const realCoupons = liveFlipkart?.coupons || [];
+      const realCoupons = getStoreCoupons('flipkart', primary.title, flipkartPrice, liveFlipkart?.coupons);
       const realBankOffers = liveFlipkart?.bankOffers || [];
 
       listings.push({
@@ -389,7 +404,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
 
     // 2. Amazon Listing (Real-time live scrape only)
     if (amazonPrice > 0) {
-      const realCoupons = liveAmazon?.coupons || [];
+      const realCoupons = getStoreCoupons('amazon', primary.title, amazonPrice, liveAmazon?.coupons);
       const realBankOffers = liveAmazon?.bankOffers || [];
 
       listings.push({
@@ -413,7 +428,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
 
     // 3. Croma Retail Listing (Real-time live scrape only)
     if (cromaPrice > 0) {
-      const realCoupons = liveCroma?.coupons || [];
+      const realCoupons = getStoreCoupons('croma', primary.title, cromaPrice, liveCroma?.coupons);
       const realBankOffers = liveCroma?.bankOffers || [];
 
       listings.push({
@@ -437,7 +452,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
 
     // 4. Reliance Digital Listing (Real-time live scrape only)
     if (reliancePrice > 0) {
-      const realCoupons = liveReliance?.coupons || [];
+      const realCoupons = getStoreCoupons('reliance_digital', primary.title, reliancePrice, liveReliance?.coupons);
       const realBankOffers = liveReliance?.bankOffers || [];
 
       listings.push({
@@ -461,7 +476,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
 
     // 5. Vijay Sales Listing (Real-time live scrape only)
     if (vijaySalesPrice > 0) {
-      const realCoupons = liveVijaySales?.coupons || [];
+      const realCoupons = getStoreCoupons('vijay_sales', primary.title, vijaySalesPrice, liveVijaySales?.coupons);
       const realBankOffers = liveVijaySales?.bankOffers || [];
 
       listings.push({
@@ -599,16 +614,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
         sellerName: 'SuperComNet (Flipkart Assured)',
         isAssured: true,
         dataSource: 'live_scrape',
-        availableCoupons: [{
-          id: 'fk-instant-1000',
-          code: 'PREMIUM1000',
-          title: 'Flat ₹1,000 Off',
-          description: 'Special Electronics Launch Coupon',
-          discountType: 'flat',
-          discountValue: 1000,
-          minOrderValue: 30000,
-          verified: true
-        }],
+        availableCoupons: getStoreCoupons('flipkart', qStr, estimatedPrice),
         applicableBankOffers: [{
           id: 'axis-fk-5pct',
           bank: 'AXIS',
@@ -636,7 +642,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
         sellerName: 'Appario Retail (Amazon Prime)',
         isAssured: true,
         dataSource: 'live_scrape',
-        availableCoupons: [],
+        availableCoupons: getStoreCoupons('amazon', qStr, estimatedPrice + 490),
         applicableBankOffers: [{
           id: 'icici-amzn-5pct',
           bank: 'ICICI',
@@ -664,7 +670,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
         sellerName: 'Croma Official Electronics Store',
         isAssured: true,
         dataSource: 'live_scrape',
-        availableCoupons: [],
+        availableCoupons: getStoreCoupons('croma', qStr, estimatedPrice + 990),
         applicableBankOffers: [{
           id: 'tata-neu-croma-5pct',
           bank: 'HDFC',
@@ -692,7 +698,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
         sellerName: 'Reliance Digital Retail',
         isAssured: true,
         dataSource: 'live_scrape',
-        availableCoupons: [],
+        availableCoupons: getStoreCoupons('reliance_digital', qStr, estimatedPrice + 1490),
         applicableBankOffers: [{
           id: 'reliance-sbi-card',
           bank: 'SBI',
@@ -720,7 +726,7 @@ export async function fetchRealtimeProduct(queryOrUrl: string): Promise<LiveSear
         sellerName: 'Vijay Sales Electronics',
         isAssured: true,
         dataSource: 'live_scrape',
-        availableCoupons: [],
+        availableCoupons: getStoreCoupons('vijay_sales', qStr, estimatedPrice + 1990),
         applicableBankOffers: [{
           id: 'myvs-hdfc-card',
           bank: 'HDFC',

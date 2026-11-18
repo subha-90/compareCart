@@ -19,6 +19,11 @@ export interface Coupon {
   minOrderValue?: number;
   verified: boolean;
   expiresInDays?: number;
+  source?: string; // e.g. "GrabOn Verified"
+  successRate?: number; // e.g. 96 (%)
+  category?: string; // e.g. "smartphones", "laptops", "all"
+  merchantId?: MerchantId;
+  terms?: string;
 }
 
 export interface BankOffer {
