@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCompareCart } from '../../lib/store';
+import { PortalRole } from '../../types';
 import { ShieldAlert, ArrowLeft, LogOut, Lock } from 'lucide-react';
 
 interface RoleGuardProps {
@@ -22,11 +23,12 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   const router = useRouter();
   const { currentProfile, logout, isAuthenticated, isMounted, openAuthModal } = useCompareCart();
 
-  const portalKey = allowedRoles.includes('admin')
-    ? 'admin'
+  // Determine primary intended role for this portal (user first, partner second, admin if admin only)
+  const portalKey: PortalRole = allowedRoles.includes('user')
+    ? 'user'
     : allowedRoles.includes('partner')
     ? 'partner'
-    : 'user';
+    : 'admin';
 
   // 0. Wait for client-side hydration mount before evaluating auth state
   if (!isMounted) {

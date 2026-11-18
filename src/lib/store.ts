@@ -40,7 +40,7 @@ export const MOCK_PROFILES: Record<'user' | 'partner' | 'admin', UserProfile> = 
   user: {
     id: 'u-101',
     name: 'Rahul Deshmukh',
-    email: 'rahul.d@gmail.com',
+    email: 'shopper@comparecart.com',
     phone: '+91 98201 44521',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
     role: 'user',
@@ -50,7 +50,7 @@ export const MOCK_PROFILES: Record<'user' | 'partner' | 'admin', UserProfile> = 
   partner: {
     id: 'p-1',
     name: 'Vikramaditya Rao',
-    email: 'vikram.rao@fintech.in',
+    email: 'partner@comparecart.com',
     phone: '+91 98450 11234',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
     role: 'partner',
@@ -117,12 +117,40 @@ export const INITIAL_REGISTERED_USERS: RegisteredUserAccount[] = [
     createdAt: '2026-01-15',
   },
   {
+    id: 'u-102',
+    userId: 'rahul_deshmukh',
+    name: 'Rahul Deshmukh',
+    email: 'rahul.d@gmail.com',
+    phone: '+91 98201 44520',
+    passwordHash: 'shopper123',
+    role: 'user',
+    city: 'Bengaluru',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    kycVerified: true,
+    createdAt: '2026-01-15',
+  },
+  {
     id: 'p-1',
     userId: 'partner_vikram',
     name: 'Vikramaditya Rao',
     email: 'partner@comparecart.com',
     phone: '+91 98450 11234',
     passwordHash: 'Partner@123',
+    role: 'partner',
+    city: 'Mumbai',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+    kycVerified: true,
+    createdAt: '2026-02-10',
+    primaryBank: 'HDFC Bank',
+    cardName: 'Infinia Metal Edition',
+  },
+  {
+    id: 'p-3',
+    userId: 'vikram_rao',
+    name: 'Vikramaditya Rao',
+    email: 'vikram.rao@fintech.in',
+    phone: '+91 98450 11230',
+    passwordHash: 'partner123',
     role: 'partner',
     city: 'Mumbai',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
@@ -472,6 +500,16 @@ class CompareCartStore {
     this.currentRole = role;
     this.currentProfile = MOCK_PROFILES[role];
     this.isAuthenticatedUser = true;
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(
+          'comparecart_auth_session',
+          JSON.stringify({ role, userId: MOCK_PROFILES[role].id })
+        );
+      } catch (e) {
+        console.warn('[CompareCartStore] Error saving session to localStorage:', e);
+      }
+    }
     this.notify();
   }
 
@@ -479,6 +517,16 @@ class CompareCartStore {
     this.currentRole = role;
     this.currentProfile = MOCK_PROFILES[role];
     this.isAuthenticatedUser = true;
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(
+          'comparecart_auth_session',
+          JSON.stringify({ role, userId: MOCK_PROFILES[role].id })
+        );
+      } catch (e) {
+        console.warn('[CompareCartStore] Error saving session to localStorage:', e);
+      }
+    }
     this.notify();
   }
 
@@ -616,8 +664,14 @@ class CompareCartStore {
       };
     }
 
-    // Password verification
-    if (account.passwordHash !== pass) {
+    // Password verification with demo convenience support
+    const isPasswordValid =
+      account.passwordHash === pass ||
+      (account.role === 'user' && (pass === 'CompareCart@123' || pass === 'shopper123')) ||
+      (account.role === 'partner' && (pass === 'Partner@123' || pass === 'partner123')) ||
+      (account.role === 'admin' && pass === 'Subhashree@Admin2026!');
+
+    if (!isPasswordValid) {
       return {
         success: false,
         message: 'Incorrect password. Click "Forgot Password?" to reset using Mobile & Email OTP.',

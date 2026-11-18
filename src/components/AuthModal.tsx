@@ -122,9 +122,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Sync selected portal and tab when authModal opens
   useEffect(() => {
     if (authModal.isOpen) {
-      if (authModal.portal) {
-        setSelectedPortal(authModal.portal);
-        setRegRole(authModal.portal === 'partner' ? 'partner' : 'user');
+      const targetPortal = propDefaultRole || authModal.portal || 'user';
+      setSelectedPortal(targetPortal);
+      setRegRole(targetPortal === 'partner' ? 'partner' : 'user');
+      const cred = portalCredentials[targetPortal];
+      if (cred) {
+        setIdentifier(cred.email);
+        setPassword(cred.password);
       }
       if (authModal.tab) {
         setActiveTab(authModal.tab);
@@ -132,7 +136,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
       setLoginError(null);
     }
-  }, [authModal.isOpen, authModal.portal, authModal.tab]);
+  }, [authModal.isOpen, authModal.portal, authModal.tab, propDefaultRole, portalCredentials]);
 
   // Close modal on Escape key press
   useEffect(() => {
@@ -456,7 +460,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
-                  onClick={() => { setSelectedPortal('user'); setLoginError(null); }}
+                  onClick={() => handleAutofill('user')}
                   className={`p-2.5 rounded-2xl border text-left transition ${
                     selectedPortal === 'user'
                       ? 'bg-amber-500/15 border-amber-500/50 text-white shadow-lg shadow-amber-500/10'
@@ -470,7 +474,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => { setSelectedPortal('partner'); setLoginError(null); }}
+                  onClick={() => handleAutofill('partner')}
                   className={`p-2.5 rounded-2xl border text-left transition ${
                     selectedPortal === 'partner'
                       ? 'bg-purple-500/15 border-purple-500/50 text-white shadow-lg shadow-purple-500/10'
@@ -484,7 +488,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => { setSelectedPortal('admin'); setLoginError(null); }}
+                  onClick={() => handleAutofill('admin')}
                   className={`p-2.5 rounded-2xl border text-left transition ${
                     selectedPortal === 'admin'
                       ? 'bg-emerald-500/15 border-emerald-500/50 text-white shadow-lg shadow-emerald-500/10'

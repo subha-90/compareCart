@@ -97,7 +97,7 @@ export default function EnterprisePortalGateway() {
 
         {/* Active Session Pill or Guest Action Banner */}
         {isAuthenticated ? (
-          <div className="mt-8 inline-flex items-center gap-3 p-1.5 pl-3.5 pr-2 bg-white dark:bg-[#1B1D27] rounded-full border border-slate-200 dark:border-white/10 text-xs shadow-lg animate-fadeIn">
+          <div className="mt-8 inline-flex flex-wrap items-center justify-center gap-3 p-1.5 pl-3.5 pr-2 bg-white dark:bg-[#1B1D27] rounded-full border border-slate-200 dark:border-white/10 text-xs shadow-lg animate-fadeIn">
             <span className="text-slate-500 dark:text-slate-400 text-xs font-medium">Active session:</span>
             <div className="flex items-center gap-2">
               <img
@@ -112,11 +112,17 @@ export default function EnterprisePortalGateway() {
             </div>
             <Link
               href={`/${currentProfile.role}`}
-              className="cc-gradient-btn text-xs px-4 py-1.5 flex items-center gap-1 shadow-glow-blue ml-2"
+              className="cc-gradient-btn text-xs px-4 py-1.5 flex items-center gap-1 shadow-glow-blue ml-1"
             >
               <span>Resume Portal</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
+            <button
+              onClick={() => openAuthModal(currentProfile.role === 'user' ? 'partner' : 'user', 'signin')}
+              className="text-xs px-3 py-1.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-zinc-200 font-medium transition"
+            >
+              Switch Role
+            </button>
           </div>
         ) : (
           <div className="mt-8 inline-flex items-center gap-2.5 p-1.5 pl-4 pr-2 bg-white dark:bg-[#1B1D27] rounded-full border border-slate-200 dark:border-white/10 text-xs shadow-lg animate-fadeIn">
@@ -165,18 +171,22 @@ export default function EnterprisePortalGateway() {
               </p>
 
               {/* Persona Tag */}
-              <div className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <div
+                onClick={() => openAuthModal('user', 'signin')}
+                className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3 cursor-pointer hover:border-[#2864FF]/40 transition group/tag"
+                title="Click to sign in as Shopper"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
                   alt="Rahul"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-8 h-8 rounded-full object-cover shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold truncate">Rahul Deshmukh</p>
-                    <span className="text-[9px] font-mono text-slate-400 uppercase">Demo Profile</span>
+                    <p className="text-xs font-semibold truncate group-hover/tag:text-[#2864FF] transition">Rahul Deshmukh</p>
+                    <span className="text-[9px] font-mono text-emerald-500 uppercase font-semibold">Shopper</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 truncate">rahul.d@gmail.com • Pass: shopper123</p>
+                  <p className="text-[10px] text-slate-500 truncate">shopper@comparecart.com • Pass: CompareCart@123</p>
                 </div>
               </div>
 
@@ -209,6 +219,14 @@ export default function EnterprisePortalGateway() {
                 <span>Enter Consumer Portal</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
+              <button
+                type="button"
+                onClick={() => openAuthModal('user', 'signin')}
+                className="w-full py-2 rounded-full border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-zinc-300 text-[11px] font-medium transition flex items-center justify-center gap-1.5"
+              >
+                <Lock className="w-3 h-3 text-[#2864FF]" />
+                <span>Sign In as Shopper</span>
+              </button>
             </div>
           </div>
 
@@ -235,18 +253,22 @@ export default function EnterprisePortalGateway() {
               </p>
 
               {/* Persona Tag */}
-              <div className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <div
+                onClick={() => openAuthModal('partner', 'signin')}
+                className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3 cursor-pointer hover:border-[#7047F5]/40 transition group/tag"
+                title="Click to sign in as Card Partner"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
                   alt="Vikram"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-8 h-8 rounded-full object-cover shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold truncate">Vikramaditya Rao</p>
-                    <span className="text-[9px] font-mono text-slate-400 uppercase">Demo Profile</span>
+                    <p className="text-xs font-semibold truncate group-hover/tag:text-[#7047F5] transition">Vikramaditya Rao</p>
+                    <span className="text-[9px] font-mono text-[#7047F5] uppercase font-semibold">Card Partner</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 truncate">vikram.rao@fintech.in • Pass: partner123</p>
+                  <p className="text-[10px] text-slate-500 truncate">partner@comparecart.com • Pass: Partner@123</p>
                 </div>
               </div>
 
@@ -279,6 +301,14 @@ export default function EnterprisePortalGateway() {
                 <span>Enter Partner Terminal</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
+              <button
+                type="button"
+                onClick={() => openAuthModal('partner', 'signin')}
+                className="w-full py-2 rounded-full border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-zinc-300 text-[11px] font-medium transition flex items-center justify-center gap-1.5"
+              >
+                <Lock className="w-3 h-3 text-[#7047F5]" />
+                <span>Sign In as Card Partner</span>
+              </button>
             </div>
           </div>
 
@@ -305,7 +335,11 @@ export default function EnterprisePortalGateway() {
               </p>
 
               {/* Persona Tag */}
-              <div className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3">
+              <div
+                onClick={() => openAuthModal('admin', 'signin')}
+                className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3 cursor-pointer hover:border-amber-400/40 transition group/tag"
+                title="Click to sign in as Super Admin"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80"
                   alt="Subhashree Mohan Swain"
@@ -313,7 +347,7 @@ export default function EnterprisePortalGateway() {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold truncate text-[#101936] dark:text-white">Subhashree Mohan Swain</p>
+                    <p className="text-xs font-semibold truncate group-hover/tag:text-amber-500 transition text-[#101936] dark:text-white">Subhashree Mohan Swain</p>
                     <span className="text-[9px] font-mono text-amber-500 uppercase font-semibold">Super Admin</span>
                   </div>
                   <p className="text-[10px] text-slate-500 truncate">subhashree.admin@comparecart.in • Pass: Subhashree@Admin2026!</p>
@@ -350,6 +384,14 @@ export default function EnterprisePortalGateway() {
                 <span>Enter Super Admin Suite</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
+              <button
+                type="button"
+                onClick={() => openAuthModal('admin', 'signin')}
+                className="w-full py-2 rounded-full border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-zinc-300 text-[11px] font-medium transition flex items-center justify-center gap-1.5"
+              >
+                <Lock className="w-3 h-3 text-amber-500" />
+                <span>Sign In as Super Admin</span>
+              </button>
             </div>
           </div>
         </div>
