@@ -340,26 +340,26 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-base font-bold text-white">{req.name}</h4>
-                      <span className="text-xs text-zinc-400">({req.city})</span>
-                      <span className="text-xs text-zinc-500">• {req.employmentType} (₹{req.monthlyIncome.toLocaleString('en-IN')}/mo)</span>
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white">{req.name}</h4>
+                      <span className="text-xs text-slate-500 dark:text-zinc-400">({req.city})</span>
+                      <span className="text-xs text-slate-500 dark:text-zinc-500">• {req.employmentType} (₹{req.monthlyIncome.toLocaleString('en-IN')}/mo)</span>
                       <span
                         className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${
                           req.status === 'PENDING_APPROVAL'
-                            ? 'bg-amber-950/60 text-amber-300 border-amber-500/30'
+                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-400/50 dark:border-amber-500/30'
                             : req.status === 'APPROVED'
-                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/30'
+                            ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-400/50 dark:border-emerald-500/30'
                             : req.status === 'STEP_UP_REQUIRED'
-                            ? 'bg-blue-950/60 text-blue-300 border-blue-500/30'
-                            : 'bg-rose-950/60 text-rose-300 border-rose-500/30'
+                            ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-400/50 dark:border-blue-500/30'
+                            : 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-400/50 dark:border-rose-500/30'
                         }`}
                       >
                         {req.status}
                       </span>
                     </div>
 
-                    <p className="text-xs text-zinc-400 mt-1 font-mono">
-                      PAN: <strong className="text-zinc-200">{req.panNumber}</strong> • Payout A/c: <strong className="text-zinc-200">{req.bankAccount}</strong> ({req.ifsc}) • Applied: {new Date(req.submittedAt).toLocaleDateString()}
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 font-mono">
+                      PAN: <strong className="text-slate-800 dark:text-zinc-200">{req.panNumber}</strong> • Payout A/c: <strong className="text-slate-800 dark:text-zinc-200">{req.bankAccount}</strong> ({req.ifsc}) • Applied: {new Date(req.submittedAt).toLocaleDateString()}
                     </p>
                   </div>
 
@@ -375,13 +375,13 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
                         </button>
                         <button
                           onClick={() => handleStepUpPartner(req.id, req.name)}
-                          className="text-xs font-bold text-blue-300 bg-blue-950/60 hover:bg-blue-900/60 border border-blue-500/30 px-3.5 py-2 rounded-xl transition"
+                          className="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-300 dark:text-blue-300 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 dark:border-blue-500/30 px-3.5 py-2 rounded-xl transition"
                         >
                           Request Step-Up KYC
                         </button>
                         <button
                           onClick={() => handleRejectPartner(req.id, req.name)}
-                          className="text-xs font-bold text-zinc-400 hover:text-rose-400 bg-zinc-900 hover:bg-zinc-800 px-3.5 py-2 rounded-xl border border-white/10 transition"
+                          className="text-xs font-bold text-rose-600 dark:text-zinc-400 hover:text-rose-700 dark:hover:text-rose-400 bg-rose-50 dark:bg-zinc-900 hover:bg-rose-100 dark:hover:bg-zinc-800 px-3.5 py-2 rounded-xl border border-rose-200 dark:border-white/10 transition"
                         >
                           Reject
                         </button>
@@ -393,52 +393,52 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
                 </div>
 
                 {/* FRM Risk Telemetry Card */}
-                <div className="bg-zinc-950/80 p-4 rounded-2xl border border-white/[0.08] grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 text-xs">
+                <div className="bg-slate-50 dark:bg-zinc-950/80 p-4 rounded-2xl border border-slate-200 dark:border-white/[0.08] grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 text-xs">
                   <div>
-                    <span className="text-[10px] text-zinc-500 uppercase font-semibold block">FRM Risk Score</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-semibold block">FRM Risk Score</span>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="text-sm font-extrabold text-emerald-400">{req.frmAssessment.overallScore}/100</span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 border border-white/10">
+                      <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">{req.frmAssessment.overallScore}/100</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-white/10">
                         {req.frmAssessment.riskTier}
                       </span>
                     </div>
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-zinc-500 uppercase font-semibold block">CIBIL Bureau Pull</span>
-                    <p className="text-sm font-bold text-amber-300 mt-0.5">{req.frmAssessment.cibilScore} ({req.frmAssessment.cibilStatus})</p>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-semibold block">CIBIL Bureau Pull</span>
+                    <p className="text-sm font-bold text-amber-600 dark:text-amber-300 mt-0.5">{req.frmAssessment.cibilScore} ({req.frmAssessment.cibilStatus})</p>
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-zinc-500 uppercase font-semibold block">Penny Drop Verification</span>
-                    <span className="text-xs font-bold text-emerald-300 flex items-center gap-1 mt-0.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-semibold block">Penny Drop Verification</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-300 flex items-center gap-1 mt-0.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                       100% Name Match
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-zinc-500 uppercase font-semibold block">Declared Card & Limit</span>
-                    <p className="text-xs font-bold text-white mt-0.5">{req.initialCardName}</p>
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold">₹{req.initialCardLimit.toLocaleString('en-IN')} (Cycle: {req.billingCycleDay || 15}th)</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-semibold block">Declared Card & Limit</span>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">{req.initialCardName}</p>
+                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">₹{req.initialCardLimit.toLocaleString('en-IN')} (Cycle: {req.billingCycleDay || 15}th)</span>
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-zinc-500 uppercase font-semibold block">AML / Sanctions</span>
-                    <span className="text-xs font-bold text-emerald-400 mt-0.5 block">PASSED (Clean)</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-semibold block">AML / Sanctions</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 block">PASSED (Clean)</span>
                   </div>
                 </div>
 
                 {/* Admin Notes / Rejection Reason / Step-Up alert */}
                 {req.adminNotes && (
-                  <div className="p-3 bg-blue-950/40 border border-blue-500/20 rounded-xl text-xs text-blue-300 flex items-center gap-2">
-                    <Info className="w-4 h-4 text-blue-400 shrink-0" />
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-500/20 rounded-xl text-xs text-blue-800 dark:text-blue-300 flex items-center gap-2">
+                    <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
                     <span>Admin Instruction: {req.adminNotes}</span>
                   </div>
                 )}
                 {req.rejectionReason && (
-                  <div className="p-3 bg-rose-950/40 border border-rose-500/20 rounded-xl text-xs text-rose-300 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/20 rounded-xl text-xs text-rose-800 dark:text-rose-300 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                     <span>Rejection Reason: {req.rejectionReason}</span>
                   </div>
                 )}
@@ -587,15 +587,15 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
                         <span>•</span>
                         <span>Effective Paid: <strong className="text-emerald-400 font-bold">₹{order.effectivePricePaid.toLocaleString('en-IN')}</strong></span>
                         <span>•</span>
-                        <span>Partner: <strong className="text-blue-300">{order.partnerName || 'Pending Match'}</strong></span>
+                        <span>Partner: <strong className="text-blue-600 dark:text-blue-300">{order.partnerName || 'Pending Match'}</strong></span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-4 self-end lg:self-auto">
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-500 uppercase font-bold block">Current State</span>
-                      <span className="inline-block text-[11px] font-mono font-bold text-amber-300 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                      <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase font-bold block">Current State</span>
+                      <span className="inline-block text-[11px] font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-500/30">
                         {order.status}
                       </span>
                     </div>
@@ -642,8 +642,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-white truncate">{partner.name}</h4>
-                      <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{partner.name}</h4>
+                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-500/30">
                         {partner.status}
                       </span>
                     </div>
@@ -700,21 +700,21 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
               <div key={cust.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2.5">
-                    <h4 className="text-xs font-bold text-white">{cust.name}</h4>
-                    <span className="text-[10px] text-zinc-400">({cust.city})</span>
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/30">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">{cust.name}</h4>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-400">({cust.city})</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30">
                       {cust.kycStatus}
                     </span>
                   </div>
-                  <p className="text-[11px] text-zinc-400 mt-0.5">
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
                     Email: {cust.email} • Phone: {cust.phone} • Joined: {cust.joinedAt}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-6">
                   <div className="text-right">
-                    <span className="text-[10px] text-zinc-500 uppercase block font-semibold">Total Orders</span>
-                    <span className="text-xs font-bold text-white">{cust.totalOrders} Purchases</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-500 uppercase block font-semibold">Total Orders</span>
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">{cust.totalOrders} Purchases</span>
                   </div>
 
                   <div className="text-right">
