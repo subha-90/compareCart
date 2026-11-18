@@ -133,8 +133,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
           </div>
 
           {/* Quick Role Switcher Panel */}
-          <div className="bg-black/60 border border-white/10 rounded-2xl p-4 shadow-xl flex flex-col gap-2 shrink-0">
-            <span className="text-[10px] font-medium text-[#86868b] uppercase tracking-wider flex items-center gap-1.5">
+          <div className="bg-slate-100 dark:bg-black/60 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-xl flex flex-col gap-2 shrink-0">
+            <span className="text-[10px] font-medium text-slate-500 dark:text-[#86868b] uppercase tracking-wider flex items-center gap-1.5">
               <KeyRound className="w-3.5 h-3.5 text-amber-400" />
               <span>Switch Perspective</span>
             </span>
@@ -155,7 +155,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
                 <span>Card Partner</span>
               </button>
 
-              <div className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15 flex items-center gap-1">
+              <div className="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500 dark:bg-white/10 text-white dark:text-white border border-amber-400 dark:border-white/15 flex items-center gap-1">
                 <span>👑 Super Admin</span>
               </div>
             </div>
@@ -194,8 +194,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-medium transition-all shrink-0 ${
                 isActive
-                  ? 'bg-white text-black shadow-sm'
-                  : 'text-[#86868b] hover:text-white'
+                  ? 'bg-[#101936] dark:bg-white text-white dark:text-black shadow-sm'
+                  : 'text-slate-600 dark:text-[#86868b] hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -302,7 +302,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onSwitchRole, onClearC
 
               <button
                 onClick={handleFlushCache}
-                className="w-full text-xs font-bold text-white bg-zinc-800 hover:bg-zinc-700 p-3 rounded-xl border border-white/10 transition flex items-center justify-center gap-2 mt-2"
+                className="w-full text-xs font-bold text-white dark:text-white bg-[#101936] hover:bg-[#1a2a52] dark:bg-zinc-800 dark:hover:bg-zinc-700 p-3 rounded-xl border border-[#101936]/20 dark:border-white/10 transition flex items-center justify-center gap-2 mt-2"
               >
                 <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Flush In-Memory Cache</span>
