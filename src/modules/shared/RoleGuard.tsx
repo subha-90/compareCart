@@ -43,7 +43,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   if (!isAuthenticated) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-[#141416]/98 backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center relative overflow-hidden animate-fade-in space-y-4">
+        <div className="bg-white dark:bg-[#161618] backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-slate-200 dark:border-white/15 shadow-xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.85)] text-center relative overflow-hidden animate-fade-in space-y-4">
           <div className="w-14 h-14 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
             <Lock className="w-7 h-7" />
           </div>
@@ -56,23 +56,24 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
             Sign In to Access {portalName}
           </h2>
 
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed max-w-md mx-auto font-medium">
-            Please log in with your <strong>Username / User ID, Mobile Number, or Email</strong> and <strong>Password</strong> to access this portal.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 leading-relaxed max-w-md mx-auto font-medium">
+            Please log in with your <strong className="text-slate-900 dark:text-white font-semibold">Username / User ID, Mobile Number, or Email</strong> and <strong className="text-slate-900 dark:text-white font-semibold">Password</strong> to access this portal.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
             <button
               onClick={() => openAuthModal(portalKey)}
-              className="py-3 px-6 rounded-2xl bg-gradient-to-r from-[#d4a017] to-[#b38312] text-black font-bold text-xs shadow-lg shadow-[#d4a017]/25 hover:from-[#e5b329] hover:to-[#c69415] transition flex items-center justify-center gap-2"
+              className="py-3 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/25 transition flex items-center justify-center gap-2 border border-amber-300/40"
             >
-              <Lock className="w-4 h-4 text-black" />
+              <Lock className="w-4 h-4 text-slate-950" />
               <span>Sign In with Credentials</span>
             </button>
             <button
               onClick={() => router.push('/')}
-              className="py-3 px-6 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-semibold text-xs transition dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/10"
+              className="py-3 px-6 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-semibold text-xs transition dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white dark:border-white/20 flex items-center justify-center gap-2 shadow-sm"
             >
-              Return to Home
+              <ArrowLeft className="w-4 h-4 text-slate-600 dark:text-zinc-300" />
+              <span>Return to Home</span>
             </button>
           </div>
         </div>
@@ -159,9 +160,9 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
 
           <button
             onClick={handleSignOut}
-            className="sm:w-auto py-3 px-5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-white/10 dark:hover:bg-white/20 dark:text-[#86868b] dark:border-white/10 text-xs font-medium flex items-center justify-center gap-2 transition"
+            className="sm:w-auto py-3 px-5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 dark:border-white/20 text-xs font-medium flex items-center justify-center gap-2 transition"
           >
-            <LogOut className="w-4 h-4 text-slate-500 dark:text-[#86868b]" />
+            <LogOut className="w-4 h-4 text-slate-500 dark:text-zinc-400" />
             <span>Sign Out</span>
           </button>
         </div>

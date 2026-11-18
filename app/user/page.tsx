@@ -147,15 +147,15 @@ export default function UserPortalPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col luxury-mesh-bg text-zinc-100 font-sans selection:bg-emerald-500 selection:text-black">
+    <div className="min-h-screen flex flex-col luxury-mesh-bg text-[#101936] dark:text-zinc-100 font-sans selection:bg-emerald-500 selection:text-black transition-colors duration-200">
       <Navbar
         currentPortal="user"
         metrics={metrics}
       />
 
       {notification && (
-        <div className="fixed bottom-6 right-6 z-50 bg-zinc-950/95 backdrop-blur-xl text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-3 animate-fade-in text-xs font-medium">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="fixed bottom-6 right-6 z-50 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl text-[#101936] dark:text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 flex items-center gap-3 animate-fade-in text-xs font-medium">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           <span>{notification}</span>
         </div>
       )}
@@ -189,16 +189,16 @@ export default function UserPortalPage() {
         </main>
       </RoleGuard>
 
-      <footer className="bg-zinc-950/80 border-t border-white/[0.08] py-8 mt-16 text-xs text-zinc-500">
+      <footer className="bg-white/90 dark:bg-zinc-950/80 border-t border-slate-200 dark:border-white/[0.08] py-8 mt-16 text-xs text-slate-500 dark:text-zinc-500 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Logo size="sm" href="/user" />
-            <span className="text-zinc-700">•</span>
-            <span className="text-zinc-400">Consumer Price Discovery Engine</span>
+            <span className="text-slate-300 dark:text-zinc-700">•</span>
+            <span className="text-slate-600 dark:text-zinc-400">Consumer Price Discovery Engine</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-emerald-400 font-semibold flex items-center gap-1">
+            <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> RBI-Compliant Escrow
             </span>
           </div>
