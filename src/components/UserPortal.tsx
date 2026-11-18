@@ -109,6 +109,7 @@ export const UserPortal: React.FC<UserPortalProps> = ({
   const [isCouponsModalOpen, setIsCouponsModalOpen] = useState(false);
   const [isBankOffersModalOpen, setIsBankOffersModalOpen] = useState(false);
   const [isMyCardsModalOpen, setIsMyCardsModalOpen] = useState(false);
+  const [activeScrapeTarget, setActiveScrapeTarget] = useState<string>('');
 
   // Sync external tab when provided
   const handleTabChange = (tab: NavTab) => {
@@ -145,6 +146,7 @@ export const UserPortal: React.FC<UserPortalProps> = ({
   const executeSearchOrScrape = (q?: string) => {
     const target = (q !== undefined ? q : (isUrlMode ? urlInput : searchQuery)).trim();
     if (!target) return;
+    setActiveScrapeTarget(target);
     handleTriggerLiveScrape(target);
     handleTabChange('compare');
   };
@@ -547,7 +549,103 @@ export const UserPortal: React.FC<UserPortalProps> = ({
             TAB 2: PRODUCT COMPARISON SCREEN (Matches Concept Middle Screen)
            ========================================================================= */}
         {navTab === 'compare' && (
-          <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+          isLiveScraping ? (
+            <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+              {/* Top Bar: Back to Home */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => handleTabChange('home')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition shadow-sm"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Back to Home</span>
+                </button>
+                <div className="flex items-center gap-1.5 text-xs text-[#2864FF] font-semibold animate-pulse">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Crawling 5 Stores Live...</span>
+                </div>
+              </div>
+
+              {/* Crawling Radar Card */}
+              <div className="rounded-[32px] bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 p-7 sm:p-10 shadow-soft text-center space-y-6">
+                <div className="mx-auto w-16 h-16 rounded-3xl bg-[#2864FF]/10 text-[#2864FF] flex items-center justify-center relative">
+                  <span className="absolute inset-0 rounded-3xl bg-[#2864FF]/20 animate-ping" />
+                  <RefreshCw className="w-8 h-8 animate-spin relative z-10" />
+                </div>
+
+                <div className="space-y-2 max-w-lg mx-auto">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#2864FF]/10 text-[#2864FF]">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Real-Time Multi-Store Scraper Active</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-[#101936] dark:text-white tracking-tight">
+                    Searching 5 Major Stores for &ldquo;{activeScrapeTarget || searchQuery || 'Product'}&rdquo;
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
+                    Live crawling Flipkart, Amazon, Croma, Reliance Digital &amp; Vijay Sales to fetch the lowest price...
+                  </p>
+                </div>
+
+                {/* 5 Store Status Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-3xl mx-auto pt-2">
+                  {[
+                    { name: 'Flipkart', color: '#2874F0', tag: 'Checking F-Assured Deals' },
+                    { name: 'Amazon', color: '#FF9900', tag: 'Scanning Prime Listings' },
+                    { name: 'Croma', color: '#00B5B5', tag: 'Tata Neu Instant Offers' },
+                    { name: 'Reliance Digital', color: '#E42529', tag: 'Checking Store Stocks' },
+                    { name: 'Vijay Sales', color: '#D11242', tag: 'Syncing Retail Discounts' },
+                  ].map((store) => (
+                    <div
+                      key={store.name}
+                      className="p-3.5 rounded-2xl bg-[#F8F9FC] dark:bg-[#252837]/60 border border-[#E8ECF4] dark:border-white/5 text-left space-y-1.5 animate-pulse"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: store.color }}
+                        />
+                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                          Crawling
+                        </span>
+                      </div>
+                      <p className="text-xs font-bold text-[#101936] dark:text-white truncate">{store.name}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-zinc-500 truncate">{store.tag}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Progress Indicators */}
+                <div className="max-w-md mx-auto pt-3 text-left space-y-2 border-t border-slate-100 dark:border-white/5 text-xs text-slate-600 dark:text-zinc-400 font-medium">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span>Query dispatched to real-time ingestion coordinator</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="w-3.5 h-3.5 text-[#2864FF] animate-spin shrink-0" />
+                    <span>Matching GrabOn verified promo codes &amp; bank cashback</span>
+                  </div>
+                  <div className="flex items-center gap-2 opacity-60">
+                    <span className="w-3.5 h-3.5 rounded-full border border-slate-300 dark:border-white/20 shrink-0" />
+                    <span>Optimizing peer-to-peer cardholder savings</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Shimmer Skeleton Comparison Matrix */}
+              <div className="rounded-[32px] bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 p-6 sm:p-8 shadow-soft space-y-4">
+                <div className="h-4 w-48 rounded-lg bg-slate-200 dark:bg-white/10 animate-pulse" />
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="h-20 rounded-2xl bg-slate-100 dark:bg-white/5 animate-pulse"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6 sm:space-y-8 animate-fadeIn">
             {/* Top Bar: Back Button & Wishlist Heart */}
             <div className="flex items-center justify-between">
               <button
@@ -718,6 +816,7 @@ export const UserPortal: React.FC<UserPortalProps> = ({
               </div>
             )}
           </div>
+          )
         )}
 
         {/* =========================================================================
@@ -979,6 +1078,52 @@ export const UserPortal: React.FC<UserPortalProps> = ({
         isOpen={isMyCardsModalOpen}
         onClose={() => setIsMyCardsModalOpen(false)}
       />
+
+      {/* Real-Time Scraping & Price Ingestion Modal */}
+      {isLiveScraping && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#1B1D27] border border-[#E8ECF4] dark:border-white/10 rounded-3xl shadow-2xl p-6 sm:p-7 text-center space-y-5 text-[#101936] dark:text-white">
+            <div className="mx-auto w-14 h-14 rounded-2xl bg-[#2864FF]/10 text-[#2864FF] flex items-center justify-center relative">
+              <span className="absolute inset-0 rounded-2xl bg-[#2864FF]/20 animate-ping" />
+              <RefreshCw className="w-7 h-7 animate-spin relative z-10" />
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#2864FF] bg-[#2864FF]/10 px-2.5 py-0.5 rounded-full inline-block">
+                Live Store Ingestion Active
+              </span>
+              <h3 className="text-xl font-black tracking-tight text-[#101936] dark:text-white">
+                Searching for &ldquo;{activeScrapeTarget || searchQuery || 'Product'}&rdquo;
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-xs mx-auto">
+                Crawling real-time prices &amp; GrabOn coupons across 5 platforms...
+              </p>
+            </div>
+
+            {/* 5 Stores Grid */}
+            <div className="grid grid-cols-5 gap-2 pt-1">
+              {[
+                { name: 'Flipkart', color: '#2874F0' },
+                { name: 'Amazon', color: '#FF9900' },
+                { name: 'Croma', color: '#00B5B5' },
+                { name: 'Reliance', color: '#E42529' },
+                { name: 'Vijay Sales', color: '#D11242' },
+              ].map((s) => (
+                <div key={s.name} className="p-2 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-100 dark:border-white/5 text-center space-y-1 animate-pulse">
+                  <span className="w-2 h-2 rounded-full mx-auto block" style={{ backgroundColor: s.color }} />
+                  <p className="text-[10px] font-bold truncate text-[#101936] dark:text-white">{s.name}</p>
+                  <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono block">Syncing</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full bg-slate-100 dark:bg-white/5 h-1.5 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-[#2864FF] via-[#7047F5] to-emerald-400 rounded-full animate-pulse" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
