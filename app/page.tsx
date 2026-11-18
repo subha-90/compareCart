@@ -306,9 +306,11 @@ export default function EnterprisePortalGateway() {
 
               {/* Persona Tag */}
               <div className="mt-5 p-3 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-sm">
-                  SS
-                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80"
+                  alt="Subhashree Mohan Swain"
+                  className="w-8 h-8 rounded-full object-cover border border-amber-500/20 shrink-0"
+                />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold truncate text-[#101936] dark:text-white">Subhashree Mohan Swain</p>
