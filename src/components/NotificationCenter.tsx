@@ -93,7 +93,7 @@ export const NotificationCenter: React.FC = () => {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-full bg-[#1c1c1e]/80 hover:bg-[#2c2c2e] border border-white/10 transition text-zinc-300 hover:text-white group"
+        className="relative p-2 rounded-full bg-[#1c1c1e]/80 hover:bg-[#2c2c2e] border border-white/10 transition text-zinc-300 hover:text-white dark:text-zinc-300 dark:hover:text-white group"
         title="Notifications & Security Alerts"
         aria-label="Notifications"
       >
@@ -116,15 +116,15 @@ export const NotificationCenter: React.FC = () => {
                 <Bell className="w-4 h-4 text-amber-400" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-[#101936] dark:text-white flex items-center gap-2">
                   Notifications
                   {unreadNotificationCount > 0 && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-medium">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-300 font-medium">
                       {unreadNotificationCount} new
                     </span>
                   )}
                 </h3>
-                <p className="text-[11px] text-zinc-400">Activity, OTP verification & order tracking</p>
+                <p className="text-[11px] text-slate-500 dark:text-zinc-400">Activity, OTP verification &amp; order tracking</p>
               </div>
             </div>
 
@@ -132,7 +132,7 @@ export const NotificationCenter: React.FC = () => {
               {unreadNotificationCount > 0 && (
                 <button
                   onClick={() => markAllNotificationsAsRead()}
-                  className="p-1.5 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition text-xs"
+                  className="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white transition text-xs"
                   title="Mark all as read"
                 >
                   <CheckCheck className="w-4 h-4" />
@@ -141,7 +141,7 @@ export const NotificationCenter: React.FC = () => {
               {notifications.length > 0 && (
                 <button
                   onClick={() => clearNotifications()}
-                  className="p-1.5 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-rose-400 transition text-xs"
+                  className="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition text-xs"
                   title="Clear all"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@ export const NotificationCenter: React.FC = () => {
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition"
+                className="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -157,13 +157,13 @@ export const NotificationCenter: React.FC = () => {
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/[0.07] bg-black/20 text-xs overflow-x-auto">
+          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-slate-200 dark:border-white/[0.07] bg-slate-50/80 dark:bg-black/20 text-xs overflow-x-auto">
             <button
               onClick={() => setActiveFilter('all')}
               className={`px-2.5 py-1 rounded-full font-medium transition ${
                 activeFilter === 'all'
-                  ? 'bg-white text-black font-semibold'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#101936] dark:bg-white text-white dark:text-black font-semibold'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
               All ({notifications.length})
@@ -172,8 +172,8 @@ export const NotificationCenter: React.FC = () => {
               onClick={() => setActiveFilter('unread')}
               className={`px-2.5 py-1 rounded-full font-medium transition ${
                 activeFilter === 'unread'
-                  ? 'bg-white text-black font-semibold'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#101936] dark:bg-white text-white dark:text-black font-semibold'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
               Unread ({unreadNotificationCount})
@@ -183,38 +183,38 @@ export const NotificationCenter: React.FC = () => {
               className={`px-2.5 py-1 rounded-full font-medium transition ${
                 activeFilter === 'otp'
                   ? 'bg-purple-500 text-white font-semibold'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
-              OTP & Security
+              OTP &amp; Security
             </button>
             <button
               onClick={() => setActiveFilter('order')}
               className={`px-2.5 py-1 rounded-full font-medium transition ${
                 activeFilter === 'order'
                   ? 'bg-amber-500 text-black font-semibold'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
-              Orders & Swipes
+              Orders &amp; Swipes
             </button>
           </div>
 
           {/* Notifications List */}
-          <div className="overflow-y-auto divide-y divide-white/[0.06] flex-1">
+          <div className="overflow-y-auto divide-y divide-slate-100 dark:divide-white/[0.06] flex-1">
             {filteredNotifications.length === 0 ? (
               <div className="py-12 px-4 text-center">
-                <Bell className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
-                <p className="text-xs text-zinc-400 font-medium">No notifications in this filter</p>
-                <p className="text-[11px] text-zinc-600 mt-0.5">Real-time alerts and OTPs will appear here</p>
+                <Bell className="w-8 h-8 text-slate-400 dark:text-zinc-600 mx-auto mb-2 opacity-50" />
+                <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">No notifications in this filter</p>
+                <p className="text-[11px] text-slate-400 dark:text-zinc-600 mt-0.5">Real-time alerts and OTPs will appear here</p>
               </div>
             ) : (
               filteredNotifications.map((notif) => (
                 <div
                   key={notif.id}
                   onClick={() => markNotificationAsRead(notif.id)}
-                  className={`p-3.5 hover:bg-white/[0.04] transition cursor-pointer flex items-start gap-3 relative ${
-                    !notif.read ? 'bg-amber-500/[0.04]' : ''
+                  className={`p-3.5 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition cursor-pointer flex items-start gap-3 relative ${
+                    !notif.read ? 'bg-amber-50/60 dark:bg-amber-500/[0.04]' : ''
                   }`}
                 >
                   {/* Unread dot */}
@@ -223,22 +223,22 @@ export const NotificationCenter: React.FC = () => {
                   )}
 
                   {/* Icon */}
-                  <div className="p-2 rounded-xl bg-white/[0.06] border border-white/10 shrink-0 mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 shrink-0 mt-0.5">
                     {getNotificationIcon(notif.type)}
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-xs font-semibold ${!notif.read ? 'text-white' : 'text-zinc-300'}`}>
+                      <p className={`text-xs font-semibold ${!notif.read ? 'text-[#101936] dark:text-white' : 'text-slate-600 dark:text-zinc-300'}`}>
                         {notif.title}
                       </p>
-                      <span className="text-[10px] text-zinc-500 shrink-0 font-mono">
+                      <span className="text-[10px] text-slate-400 dark:text-zinc-500 shrink-0 font-mono">
                         {formatTimeAgo(notif.timestamp)}
                       </span>
                     </div>
 
-                    <p className="text-[11.5px] text-zinc-400 mt-1 leading-relaxed">
+                    <p className="text-[11.5px] text-slate-500 dark:text-zinc-400 mt-1 leading-relaxed">
                       {notif.message}
                     </p>
 
@@ -247,8 +247,8 @@ export const NotificationCenter: React.FC = () => {
                       <div className="mt-2.5 p-2 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <KeyRound className="w-3.5 h-3.5 text-purple-400" />
-                          <span className="text-[11px] text-purple-300 font-mono">Code:</span>
-                          <span className="text-sm font-mono font-bold tracking-widest text-purple-200">
+                          <span className="text-[11px] text-purple-600 dark:text-purple-300 font-mono">Code:</span>
+                          <span className="text-sm font-mono font-bold tracking-widest text-purple-700 dark:text-purple-200">
                             {notif.otpCode}
                           </span>
                         </div>
@@ -277,9 +277,9 @@ export const NotificationCenter: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="p-2.5 bg-black/40 border-t border-white/10 text-center text-[10px] text-zinc-500 flex items-center justify-center gap-1.5">
+          <div className="p-2.5 bg-slate-50 dark:bg-black/40 border-t border-slate-200 dark:border-white/10 text-center text-[10px] text-slate-400 dark:text-zinc-500 flex items-center justify-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>CompareCart Real-Time Notification & Event Bus</span>
+            <span>CompareCart Real-Time Notification &amp; Event Bus</span>
           </div>
         </div>
       )}

@@ -495,6 +495,14 @@ html.light .bg-\[\#1c1c1e\]\/80 {
   border: 1px solid rgba(212, 160, 23, 0.2) !important;
 }
 
+html.light .bg-\[\#121214\],
+html.light .bg-\[\#121214\]\/95,
+html.light .bg-\[\#121214\]\/90 {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(212, 160, 23, 0.22) !important;
+  box-shadow: 0 10px 40px -8px rgba(0, 0, 0, 0.12) !important;
+}
+
 html.light header {
   background-color: rgba(247, 246, 243, 0.85) !important;
   border-bottom: 1px solid rgba(212, 160, 23, 0.2) !important;

@@ -43,20 +43,20 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   if (!isAuthenticated) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center p-4">
-        <div className="bg-[#141416]/98 backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center relative overflow-hidden animate-fade-in space-y-4">
-          <div className="w-14 h-14 rounded-full bg-[#d4a017]/15 border border-[#d4a017]/30 text-[#d4a017] flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-[#141416]/98 backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center relative overflow-hidden animate-fade-in space-y-4">
+          <div className="w-14 h-14 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
             <Lock className="w-7 h-7" />
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-zinc-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-700 dark:text-amber-300 text-[10px] font-mono uppercase tracking-wider font-semibold">
             <span>AUTHENTICATION REQUIRED</span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#101936] dark:text-white tracking-tight">
             Sign In to Access {portalName}
           </h2>
 
-          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed max-w-md mx-auto font-medium">
             Please log in with your <strong>Username / User ID, Mobile Number, or Email</strong> and <strong>Password</strong> to access this portal.
           </p>
 
@@ -70,7 +70,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
             </button>
             <button
               onClick={() => router.push('/')}
-              className="py-3 px-6 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition"
+              className="py-3 px-6 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-semibold text-xs transition dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/10"
             >
               Return to Home
             </button>
@@ -98,40 +98,40 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-4">
-      <div className="bg-[#1c1c1e]/98 backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center relative overflow-hidden animate-fade-in">
-        <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto mb-5">
-          <ShieldAlert className="w-7 h-7 text-red-400" />
+      <div className="bg-white dark:bg-[#1c1c1e]/98 backdrop-blur-3xl max-w-lg w-full rounded-[28px] p-8 border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-center relative overflow-hidden animate-fade-in">
+        <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-400 flex items-center justify-center mx-auto mb-5">
+          <ShieldAlert className="w-7 h-7" />
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-mono uppercase tracking-wider font-semibold mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-[10px] font-mono uppercase tracking-wider font-semibold mb-3">
           <Lock className="w-3 h-3" />
           <span>RBAC ISOLATION • ACCESS DENIED (HTTP 403)</span>
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
+        <h2 className="text-xl sm:text-2xl font-bold text-[#101936] dark:text-white tracking-tight">
           {portalName}
         </h2>
 
-        <p className="text-xs sm:text-sm text-[#86868b] mt-2 leading-relaxed max-w-md mx-auto">
-          Strict role isolation active. This secure portal is strictly reserved for authenticated <strong className="text-white font-medium">{requiredRoleTitle}</strong> accounts.
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-[#86868b] mt-2 leading-relaxed max-w-md mx-auto font-medium">
+          Strict role isolation active. This secure portal is strictly reserved for authenticated <strong className="text-slate-900 dark:text-white font-semibold">{requiredRoleTitle}</strong> accounts.
         </p>
 
         {/* Current Authenticated Identity (Locked Out) */}
-        <div className="mt-5 p-3.5 bg-black/50 rounded-2xl border border-white/10 flex items-center justify-between text-left">
+        <div className="mt-5 p-3.5 bg-slate-50 dark:bg-black/50 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center justify-between text-left">
           <div className="flex items-center gap-3">
             <img
               src={currentProfile.avatar}
               alt={currentProfile.name}
-              className="w-9 h-9 rounded-full object-cover"
+              className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-white/10"
             />
             <div>
-              <p className="text-xs font-semibold text-white">{currentProfile.name}</p>
-              <p className="text-[10px] text-[#86868b] font-mono capitalize">
-                Authenticated As: <span className="text-white font-medium">{currentProfile.role.toUpperCase()}</span>
+              <p className="text-xs font-semibold text-[#101936] dark:text-white">{currentProfile.name}</p>
+              <p className="text-[10px] text-slate-500 dark:text-[#86868b] font-mono capitalize">
+                Authenticated As: <span className="text-slate-900 dark:text-white font-medium">{currentProfile.role.toUpperCase()}</span>
               </p>
             </div>
           </div>
-          <span className="text-[9px] font-mono px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-semibold uppercase">
+          <span className="text-[9px] font-mono px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-semibold uppercase">
             Unauthorized
           </span>
         </div>
@@ -140,7 +140,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
         <div className="mt-4">
           <button
             onClick={() => openAuthModal(portalKey)}
-            className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:text-white hover:bg-amber-500/25 transition text-xs font-semibold flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:text-amber-800 dark:hover:text-white hover:bg-amber-500/25 transition text-xs font-semibold flex items-center justify-center gap-2"
           >
             <Lock className="w-3.5 h-3.5" />
             <span>Sign In with {requiredRoleTitle} Account</span>
@@ -151,22 +151,22 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
         <div className="mt-4 flex flex-col sm:flex-row gap-2.5">
           <Link
             href={userPortalUrl}
-            className="apple-pill-btn flex-1 py-3 px-4 flex items-center justify-center gap-2 text-xs"
+            className="flex-1 py-3 px-4 rounded-full bg-[#101936] hover:bg-[#1B1D27] dark:bg-white dark:hover:bg-slate-200 text-white dark:text-[#101936] text-xs font-semibold shadow-sm flex items-center justify-center gap-2 transition"
           >
-            <ArrowLeft className="w-4 h-4 text-white" />
+            <ArrowLeft className="w-4 h-4 text-white dark:text-[#101936]" />
             <span>Return to {userPortalTitle}</span>
           </Link>
 
           <button
             onClick={handleSignOut}
-            className="apple-pill-btn-secondary sm:w-auto py-3 px-5 text-xs flex items-center justify-center gap-2"
+            className="sm:w-auto py-3 px-5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-white/10 dark:hover:bg-white/20 dark:text-[#86868b] dark:border-white/10 text-xs font-medium flex items-center justify-center gap-2 transition"
           >
-            <LogOut className="w-4 h-4 text-[#86868b]" />
+            <LogOut className="w-4 h-4 text-slate-500 dark:text-[#86868b]" />
             <span>Sign Out</span>
           </button>
         </div>
 
-        <p className="text-[10px] text-[#86868b] mt-5 font-mono">
+        <p className="text-[10px] text-slate-400 dark:text-[#86868b] mt-5 font-mono">
           Security Policy: Enterprise Tripartite Portal Isolation • Incident Logged to Audit Ledger
         </p>
       </div>
