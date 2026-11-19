@@ -763,16 +763,14 @@ class CompareCartStore {
       otpCode,
     });
 
-    // NOTE: External third-party SMS/Email gateway disabled for now (uncomment when adding Twilio/Resend keys)
-    /*
+    // Background dispatch to Real Email (Resend) and SMS Gateways
     RealNotificationService.dispatchToGateway({
       type: 'OTP_VERIFICATION',
       recipientPhone: data.phone,
       recipientEmail: data.email,
       recipientName: data.name,
       otpCode,
-    });
-    */
+    }).catch(err => console.warn('[OTP Dispatch] Best-effort delivery warning:', err));
 
     this.notify();
     return {
@@ -932,16 +930,14 @@ class CompareCartStore {
       otpCode: resetOtp,
     });
 
-    // NOTE: External third-party SMS/Email gateway disabled for now (uncomment when adding Twilio/Resend keys)
-    /*
+    // Background dispatch to Real Email (Resend) and SMS Gateways
     RealNotificationService.dispatchToGateway({
       type: 'PASSWORD_RESET',
       recipientPhone: account.phone,
       recipientEmail: account.email,
       recipientName: account.name,
       otpCode: resetOtp,
-    });
-    */
+    }).catch(err => console.warn('[PasswordReset Dispatch] Best-effort delivery warning:', err));
 
     this.notify();
     return {

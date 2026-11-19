@@ -9,9 +9,19 @@ import {
   RefreshCw,
   ArrowRight,
   Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  Smartphone,
+  Mail,
+  ShieldCheck,
+  Lock
 } from 'lucide-react';
 import { useCompareCart } from '../../lib/store';
+import {
+  isFirebaseConfigured,
+  initRecaptchaVerifier,
+  sendCarrierPhoneOtp,
+  verifyCarrierPhoneOtp
+} from '../../lib/firebase';
 
 interface ForgotPasswordTabProps {
   initialIdentifier?: string;
@@ -36,9 +46,11 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
   const [resetError, setResetError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(30);
+  const [resetChannel, setResetChannel] = useState<'both' | 'sms' | 'email'>('both');
+  const [resetConfirmationResult, setResetConfirmationResult] = useState<any | null>(null);
   const resetOtpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const handleRequestPasswordReset = (e: React.FormEvent) => {
+  const handleRequestPasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetError(null);
     if (!resetIdentifier) {
@@ -47,6 +59,23 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
     }
 
     setIsLoading(true);
+
+    // If phone number entered and Firebase configured, dispatch carrier SMS
+    const isPhoneLike = /^[0-9+\s-]{10,}$/.test(resetIdentifier.trim());
+    if (isPhoneLike && (resetChannel === 'sms' || resetChannel === 'both') && isFirebaseConfigured) {
+      try {
+        const verifier = initRecaptchaVerifier('firebase-recaptcha-reset');
+        if (verifier) {
+          const fbRes = await sendCarrierPhoneOtp(resetIdentifier, verifier);
+          if (fbRes.success && fbRes.confirmationResult) {
+            setResetConfirmationResult(fbRes.confirmationResult);
+          }
+        }
+      } catch (fbErr) {
+        console.warn('[Firebase] Reset SMS fallback to simulated mode:', fbErr);
+      }
+    }
+
     setTimeout(() => {
       const res = requestPasswordResetOTP(resetIdentifier);
       setIsLoading(false);
@@ -57,7 +86,7 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
       } else {
         setResetError(res.message);
       }
-    }, 500);
+    }, 400);
   };
 
   const handleResetOtpChange = (index: number, value: string) => {
@@ -78,7 +107,7 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
     }
   };
 
-  const handleCompletePasswordReset = (e: React.FormEvent) => {
+  const handleCompletePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetError(null);
 
@@ -99,6 +128,23 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
     }
 
     setIsLoading(true);
+
+    if (resetConfirmationResult) {
+      try {
+        const fbVerify = await verifyCarrierPhoneOtp(resetConfirmationResult, code);
+        if (fbVerify.success) {
+          const res = verifyPasswordReset(resetIdentifier, code, resetNewPassword);
+          setIsLoading(false);
+          if (res.success) {
+            setResetStep('done');
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('[Firebase] Verification fallback to store:', err);
+      }
+    }
+
     setTimeout(() => {
       const res = verifyPasswordReset(resetIdentifier, code, resetNewPassword);
       setIsLoading(false);
@@ -107,7 +153,7 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
       } else {
         setResetError(res.message);
       }
-    }, 500);
+    }, 400);
   };
 
   return (
@@ -156,6 +202,69 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
             </div>
           </div>
 
+          {/* FREE OTP CHANNEL SELECTOR */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block">
+                Free Delivery Method
+              </label>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" />
+                Zero Cost
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setResetChannel('both')}
+                className={`p-2 rounded-xl border text-center transition ${
+                  resetChannel === 'both'
+                    ? 'bg-amber-500/15 border-amber-500 text-amber-900 dark:text-white font-bold ring-1 ring-amber-500'
+                    : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <Smartphone className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <Mail className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <p className="text-[11px] font-bold">Dual Delivery</p>
+                <p className="text-[9px] text-slate-500 dark:text-zinc-400">SMS + Email</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setResetChannel('sms')}
+                className={`p-2 rounded-xl border text-center transition ${
+                  resetChannel === 'sms'
+                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-900 dark:text-white font-bold ring-1 ring-emerald-500'
+                    : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5 mx-auto mb-0.5 text-emerald-600 dark:text-emerald-400" />
+                <p className="text-[11px] font-bold">Carrier SMS</p>
+                <p className="text-[9px] text-slate-500 dark:text-zinc-400">Firebase Free</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setResetChannel('email')}
+                className={`p-2 rounded-xl border text-center transition ${
+                  resetChannel === 'email'
+                    ? 'bg-blue-500/15 border-blue-500 text-blue-900 dark:text-white font-bold ring-1 ring-blue-500'
+                    : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400'
+                }`}
+              >
+                <Mail className="w-3.5 h-3.5 mx-auto mb-0.5 text-blue-600 dark:text-blue-400" />
+                <p className="text-[11px] font-bold">Email OTP</p>
+                <p className="text-[9px] text-slate-500 dark:text-zinc-400">Resend Free</p>
+              </button>
+            </div>
+          </div>
+
+          {/* Invisible Recaptcha Container for Reset Flow */}
+          <div id="firebase-recaptcha-reset" className="hidden"></div>
+
           <button
             type="submit"
             disabled={isLoading}
@@ -164,11 +273,17 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
             {isLoading ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Sending OTP Code...</span>
+                <span>Dispatching Free OTP Code...</span>
               </>
             ) : (
               <>
-                <span>Send Reset OTP to Email & Mobile</span>
+                <span>
+                  {resetChannel === 'sms'
+                    ? 'Send Free Carrier SMS OTP'
+                    : resetChannel === 'email'
+                    ? 'Send Free Email OTP'
+                    : 'Send Free Reset OTP (Dual)'}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -181,8 +296,22 @@ export const ForgotPasswordTab: React.FC<ForgotPasswordTabProps> = ({
         <form onSubmit={handleCompletePasswordReset} className="space-y-4">
           <div className="text-center pb-1">
             <h3 className="text-base font-bold text-[#101936] dark:text-white">Enter OTP & Set New Password</h3>
-            <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1 max-w-sm mx-auto">
-              Verification code sent to your registered Email & Mobile.
+            <div className="mt-2 flex flex-wrap justify-center gap-2 text-[11px]">
+              {(resetChannel === 'sms' || resetChannel === 'both') && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                  <Smartphone className="w-3 h-3 text-emerald-500" />
+                  <span>SMS: <span className="font-mono font-bold">{resetIdentifier}</span></span>
+                </div>
+              )}
+              {(resetChannel === 'email' || resetChannel === 'both') && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300">
+                  <Mail className="w-3 h-3 text-blue-500" />
+                  <span>Email: <span className="font-mono font-bold">{resetIdentifier}</span></span>
+                </div>
+              )}
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">
+              Code expires in 5 minutes. Works seamlessly with zero charges.
             </p>
           </div>
 

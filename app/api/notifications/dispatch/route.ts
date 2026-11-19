@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
           </div>
         `;
 
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'CompareCart <onboarding@resend.dev>';
         const res = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'CompareCart <onboarding@resend.dev>',
+            from: fromEmail,
             to: [recipientEmail],
             subject: emailSubject,
             html: emailHtml,

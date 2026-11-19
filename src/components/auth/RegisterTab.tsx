@@ -17,9 +17,18 @@ import {
   Sparkles,
   CheckCircle2,
   RefreshCw,
-  ArrowRight
+  ArrowRight,
+  Smartphone,
+  ShieldCheck,
+  Radio
 } from 'lucide-react';
 import { useCompareCart } from '../../lib/store';
+import {
+  isFirebaseConfigured,
+  initRecaptchaVerifier,
+  sendCarrierPhoneOtp,
+  verifyCarrierPhoneOtp
+} from '../../lib/firebase';
 
 interface RegisterTabProps {
   initialRole?: 'user' | 'partner';
@@ -52,6 +61,11 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
   const [regCardName, setRegCardName] = useState('Regalia Gold Credit Card');
   const [regAgree, setRegAgree] = useState(true);
 
+  // Free Multi-Channel OTP State (Carrier SMS via Firebase + Email OTP via Resend)
+  const [otpChannel, setOtpChannel] = useState<'both' | 'sms' | 'email'>('both');
+  const [confirmationResult, setConfirmationResult] = useState<any | null>(null);
+  const [carrierSmsStatus, setCarrierSmsStatus] = useState<'idle' | 'live' | 'simulated'>('idle');
+
   const [registrationStep, setRegistrationStep] = useState<'form' | 'otp' | 'success'>('form');
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
@@ -68,7 +82,7 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
     return () => clearTimeout(timer);
   }, [registrationStep, resendCountdown]);
 
-  const handleStartRegistration = (e: React.FormEvent) => {
+  const handleStartRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     setOtpError(null);
 
@@ -93,6 +107,26 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
     }
 
     setIsLoading(true);
+
+    // 1. FREE CARRIER SMS VIA FIREBASE PHONE AUTH
+    let smsMode: 'live' | 'simulated' = 'simulated';
+    if ((otpChannel === 'sms' || otpChannel === 'both') && isFirebaseConfigured) {
+      try {
+        const verifier = initRecaptchaVerifier('firebase-recaptcha-register');
+        if (verifier) {
+          const fbRes = await sendCarrierPhoneOtp(regPhone, verifier);
+          if (fbRes.success && fbRes.confirmationResult) {
+            setConfirmationResult(fbRes.confirmationResult);
+            smsMode = 'live';
+          }
+        }
+      } catch (fbErr) {
+        console.warn('[Firebase] Carrier SMS fallback to simulated mode:', fbErr);
+      }
+    }
+    setCarrierSmsStatus(smsMode);
+
+    // 2. DISPATCH VIA STORE (Triggers Live Resend Email API + Native Browser Push)
     setTimeout(() => {
       const res = requestRegistrationOTP({
         name: regName,
@@ -113,7 +147,7 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
       } else {
         setOtpError(res.message);
       }
-    }, 600);
+    }, 400);
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -141,7 +175,7 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
     }
   };
 
-  const handleVerifyOtp = () => {
+  const handleVerifyOtp = async () => {
     const code = otpDigits.join('');
     if (code.length < 6) {
       setOtpError('Please enter the full 6-digit verification code.');
@@ -150,6 +184,24 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
 
     setIsLoading(true);
     setOtpError(null);
+
+    // If Firebase live carrier confirmation was received, verify with Firebase
+    if (confirmationResult) {
+      try {
+        const fbVerify = await verifyCarrierPhoneOtp(confirmationResult, code);
+        if (fbVerify.success) {
+          const res = verifyRegistrationOTP(code);
+          setIsLoading(false);
+          if (res.success) {
+            setRegisteredUserId(res.userId || 'CC-MEMBER');
+            setRegistrationStep('success');
+            return;
+          }
+        }
+      } catch (err: any) {
+        console.warn('[Firebase] Verification fallback to store verification:', err);
+      }
+    }
 
     setTimeout(() => {
       const res = verifyRegistrationOTP(code);
@@ -160,7 +212,7 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
       } else {
         setOtpError(res.message);
       }
-    }, 500);
+    }, 400);
   };
 
   const handleResendOtp = () => {
@@ -369,6 +421,69 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
             </span>
           </label>
 
+          {/* FREE OTP DELIVERY CHANNEL SELECTOR */}
+          <div className="pt-1">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block">
+                Free OTP Delivery Method
+              </label>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" />
+                100% Free Service
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setOtpChannel('both')}
+                className={`p-2.5 rounded-xl border text-center transition ${
+                  otpChannel === 'both'
+                    ? 'bg-amber-500/15 border-amber-500 text-amber-900 dark:text-white font-bold ring-1 ring-amber-500'
+                    : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-white/20'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <Smartphone className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <Mail className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <p className="text-[11px] font-bold">Dual Delivery</p>
+                <p className="text-[9px] text-slate-500 dark:text-zinc-400 mt-0.5">SMS + Email (Best)</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setOtpChannel('sms')}
+                className={`p-2.5 rounded-xl border text-center transition ${
+                  otpChannel === 'sms'
+                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-900 dark:text-white font-bold ring-1 ring-emerald-500'
+                    : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-white/20'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5 mx-auto mb-1 text-emerald-600 dark:text-emerald-400" />
+                <p className="text-[11px] font-bold">Carrier SMS</p>
+                <p className="text-[9px] text-slate-500 dark:text-zinc-400 mt-0.5">Mobile Phone</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setOtpChannel('email')}
+                className={`p-2.5 rounded-xl border text-center transition ${
+                  otpChannel === 'email'
+                    ? 'bg-blue-500/15 border-blue-500 text-blue-900 dark:text-white font-bold ring-1 ring-blue-500'
+                    : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-white/20'
+                }`}
+              >
+                <Mail className="w-3.5 h-3.5 mx-auto mb-1 text-blue-600 dark:text-blue-400" />
+                <p className="text-[11px] font-bold">Email OTP</p>
+                <p className="text-[9px] text-slate-500 dark:text-zinc-400 mt-0.5">Direct to Inbox</p>
+              </button>
+            </div>
+          </div>
+
+          {/* Invisible Container for Firebase Phone Auth Recaptcha */}
+          <div id="firebase-recaptcha-register" className="hidden"></div>
+
           <button
             type="submit"
             disabled={isLoading}
@@ -377,11 +492,23 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
             {isLoading ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Sending OTP to Mobile & Email...</span>
+                <span>
+                  {otpChannel === 'sms'
+                    ? 'Sending Carrier SMS...'
+                    : otpChannel === 'email'
+                    ? 'Sending Email OTP...'
+                    : 'Dispatching to SMS & Email...'}
+                </span>
               </>
             ) : (
               <>
-                <span>Send Verification OTP</span>
+                <span>
+                  {otpChannel === 'sms'
+                    ? 'Send Carrier SMS OTP'
+                    : otpChannel === 'email'
+                    ? 'Send Email OTP'
+                    : 'Send Verification OTP (Dual)'}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -389,17 +516,31 @@ export const RegisterTab: React.FC<RegisterTabProps> = ({
         </form>
       )}
 
-      {/* STEP 2: DUAL-CHANNEL OTP VERIFICATION */}
+      {/* STEP 2: MULTI-CHANNEL OTP VERIFICATION */}
       {registrationStep === 'otp' && (
-        <div className="py-2 space-y-5 text-center">
+        <div className="py-2 space-y-4 text-center">
           <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mx-auto">
             <KeyRound className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
 
           <div>
             <h3 className="text-base font-bold text-[#101936] dark:text-white">Enter 6-Digit Verification Code</h3>
-            <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1 max-w-sm mx-auto">
-              We sent a security OTP to both Mobile (<span className="font-mono font-medium text-slate-900 dark:text-white">{regPhone}</span>) and Email (<span className="font-mono font-medium text-slate-900 dark:text-white">{regEmail}</span>).
+            <div className="mt-2 flex flex-wrap justify-center gap-2 text-[11px]">
+              {(otpChannel === 'sms' || otpChannel === 'both') && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                  <Smartphone className="w-3 h-3 text-emerald-500" />
+                  <span>SMS: <span className="font-mono font-bold">{regPhone}</span></span>
+                </div>
+              )}
+              {(otpChannel === 'email' || otpChannel === 'both') && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300">
+                  <Mail className="w-3 h-3 text-blue-500" />
+                  <span>Email: <span className="font-mono font-bold">{regEmail}</span></span>
+                </div>
+              )}
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1.5">
+              Code expires in 5 minutes. Works seamlessly with zero charges.
             </p>
           </div>
 
