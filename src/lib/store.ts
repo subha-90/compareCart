@@ -74,7 +74,7 @@ export const PORTAL_CREDENTIALS: Record<PortalRole, PortalCredential> = {
     portal: 'user',
     portalName: 'Shopper Portal',
     email: 'shopper@comparecart.com',
-    password: 'CompareCart@123',
+    password: 'CompareCart@Shopper2026!',
     role: 'user',
     name: 'Rahul Deshmukh',
     badge: 'Verified Shopper',
@@ -84,7 +84,7 @@ export const PORTAL_CREDENTIALS: Record<PortalRole, PortalCredential> = {
     portal: 'partner',
     portalName: 'Card Partner Network',
     email: 'partner@comparecart.com',
-    password: 'Partner@123',
+    password: 'CompareCart@Partner2026!',
     role: 'partner',
     name: 'Vikramaditya Rao',
     badge: 'Elite Cardholder',
@@ -109,7 +109,7 @@ export const INITIAL_REGISTERED_USERS: RegisteredUserAccount[] = [
     name: 'Rahul Deshmukh',
     email: 'shopper@comparecart.com',
     phone: '+91 98201 44521',
-    passwordHash: 'CompareCart@123',
+    passwordHash: 'CompareCart@Shopper2026!',
     role: 'user',
     city: 'Bengaluru',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
@@ -122,7 +122,7 @@ export const INITIAL_REGISTERED_USERS: RegisteredUserAccount[] = [
     name: 'Rahul Deshmukh',
     email: 'rahul.d@gmail.com',
     phone: '+91 98201 44520',
-    passwordHash: 'shopper123',
+    passwordHash: 'CompareCart@Shopper2026!',
     role: 'user',
     city: 'Bengaluru',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
@@ -135,7 +135,7 @@ export const INITIAL_REGISTERED_USERS: RegisteredUserAccount[] = [
     name: 'Vikramaditya Rao',
     email: 'partner@comparecart.com',
     phone: '+91 98450 11234',
-    passwordHash: 'Partner@123',
+    passwordHash: 'CompareCart@Partner2026!',
     role: 'partner',
     city: 'Mumbai',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
@@ -150,7 +150,7 @@ export const INITIAL_REGISTERED_USERS: RegisteredUserAccount[] = [
     name: 'Vikramaditya Rao',
     email: 'vikram.rao@fintech.in',
     phone: '+91 98450 11230',
-    passwordHash: 'partner123',
+    passwordHash: 'CompareCart@Partner2026!',
     role: 'partner',
     city: 'Mumbai',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
@@ -165,7 +165,7 @@ export const INITIAL_REGISTERED_USERS: RegisteredUserAccount[] = [
     name: 'Rohit Sharma',
     email: 'rohit.sharma@comparecart.com',
     phone: '+91 98199 44321',
-    passwordHash: 'Partner@123',
+    passwordHash: 'CompareCart@Partner2026!',
     role: 'partner',
     city: 'Mumbai',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
@@ -680,8 +680,8 @@ class CompareCartStore {
     // Password verification with demo convenience support
     const isPasswordValid =
       account.passwordHash === pass ||
-      (account.role === 'user' && (pass === 'CompareCart@123' || pass === 'shopper123')) ||
-      (account.role === 'partner' && (pass === 'Partner@123' || pass === 'partner123')) ||
+      (account.role === 'user' && (pass === 'CompareCart@Shopper2026!' || pass === 'CompareCart@123' || pass === 'shopper123')) ||
+      (account.role === 'partner' && (pass === 'CompareCart@Partner2026!' || pass === 'Partner@123' || pass === 'partner123')) ||
       (account.role === 'admin' && pass === 'Subhashree@Admin2026!');
 
     if (!isPasswordValid) {

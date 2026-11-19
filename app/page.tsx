@@ -186,7 +186,7 @@ export default function EnterprisePortalGateway() {
                     <p className="text-xs font-semibold truncate group-hover/tag:text-[#2864FF] transition">Rahul Deshmukh</p>
                     <span className="text-[9px] font-mono text-emerald-500 uppercase font-semibold">Shopper</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 truncate">shopper@comparecart.com • Pass: CompareCart@123</p>
+                  <p className="text-[10px] text-slate-500 truncate">shopper@comparecart.com • Pass: CompareCart@Shopper2026!</p>
                 </div>
               </div>
 
@@ -268,7 +268,7 @@ export default function EnterprisePortalGateway() {
                     <p className="text-xs font-semibold truncate group-hover/tag:text-[#7047F5] transition">Vikramaditya Rao</p>
                     <span className="text-[9px] font-mono text-[#7047F5] uppercase font-semibold">Card Partner</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 truncate">partner@comparecart.com • Pass: Partner@123</p>
+                  <p className="text-[10px] text-slate-500 truncate">partner@comparecart.com • Pass: CompareCart@Partner2026!</p>
                 </div>
               </div>
 
