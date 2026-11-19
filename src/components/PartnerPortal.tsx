@@ -307,9 +307,11 @@ export const PartnerPortal: React.FC = () => {
                       <span className="text-[11px] font-mono tracking-widest uppercase text-amber-300 font-extrabold drop-shadow">
                         {card.bank}
                       </span>
-                      <h4 className="text-xs font-bold text-white mt-0.5 tracking-wide">{card.cardName}</h4>
+                      <h4 className="text-xs font-bold text-white !text-white card-name mt-0.5 tracking-wide" style={{ color: '#ffffff' }}>
+                        {card.cardName}
+                      </h4>
                     </div>
-                    <span className="text-[10px] font-mono font-bold text-zinc-200 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
+                    <span className="text-[10px] font-mono font-bold text-white bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20" style={{ color: '#ffffff' }}>
                       {card.network}
                     </span>
                   </div>
@@ -320,20 +322,20 @@ export const PartnerPortal: React.FC = () => {
                     <svg className="w-4 h-4 text-amber-200/80 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.343 9.343c5.857-5.857 15.355-5.857 21.213 0" />
                     </svg>
-                    <span className="text-[10px] font-mono text-zinc-300 ml-auto tracking-wider">
+                    <span className="text-[10px] font-mono text-white/90 ml-auto tracking-wider card-cycle" style={{ color: '#ffffff' }}>
                       Cycle: {card.billingCycleDate}th
                     </span>
                   </div>
 
                   {/* Card Number & Available Limit */}
                   <div className="relative z-10">
-                    <p className="font-mono text-xs sm:text-sm font-bold text-zinc-200 tracking-[0.25em] drop-shadow-md">
+                    <p className="font-mono text-xs sm:text-sm font-bold text-white tracking-[0.25em] drop-shadow-md" style={{ color: '#ffffff' }}>
                       •••• •••• •••• {card.last4}
                     </p>
 
                     {isEditing ? (
                       <div className="mt-2 space-y-1.5 bg-black/80 backdrop-blur-md p-2 rounded-xl border border-white/20">
-                        <label className="text-[10px] text-zinc-300 block font-semibold">New Monthly Limit (₹):</label>
+                        <label className="text-[10px] text-white block font-semibold" style={{ color: '#ffffff' }}>New Monthly Limit (₹):</label>
                         <input
                           type="number"
                           step="10000"
@@ -359,11 +361,11 @@ export const PartnerPortal: React.FC = () => {
                     ) : (
                       <div className="mt-2 pt-2 border-t border-white/10">
                         <div className="flex justify-between text-[11px] mb-1">
-                          <span className="text-zinc-300">
-                            Available: <strong className="text-white">₹{card.availableLimit.toLocaleString('en-IN')}</strong>
+                          <span className="text-white/90 font-medium" style={{ color: '#ffffff' }}>
+                            Available: <strong className="text-white !text-white card-limit font-bold" style={{ color: '#ffffff' }}>₹{card.availableLimit.toLocaleString('en-IN')}</strong>
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-zinc-400">Max: ₹{(card.monthlyLimit / 100000).toFixed(1)}L</span>
+                            <span className="text-white/80 card-limit-max" style={{ color: '#ffffff' }}>Max: ₹{(card.monthlyLimit / 100000).toFixed(1)}L</span>
                             <button
                               onClick={() => {
                                 setEditingCardId(card.id);
